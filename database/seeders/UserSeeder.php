@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             'username' => 'jadid99',
             'email' => 'jadid@example.com',
             'password' => bcrypt('12345678'),
+            'occupation' => 'Sekretaris Desa',
             'role' => 'super-admin'
         ]);
 
@@ -30,6 +31,7 @@ class UserSeeder extends Seeder
             'username' => 'akbar99',
             'email' => 'akbar@example.com',
             'password' => bcrypt('87654321'),
+            'occupation' => 'Kepala Bidang Pemerintahan',
             'role' => 'admin'
         ]);
 
