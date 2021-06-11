@@ -24,9 +24,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
     Route::get('/administrators', [AdministratorController::class, 'index']);
     Route::get('/profile', [ProfileController::class, 'showProfile']);
     Route::patch('/profile/update', [ProfileController::class, 'update']);
+});
 
-    Route::group(['role:super-admin', 'prefix' => 'administrator'], function () {
-        Route::post('/', [AdministratorController::class, 'store']);
-        Route::delete('/{id}', [AdministratorController::class, 'destroy']);
-    }); 
+Route::group(['middleware' => ['auth:sanctum', 'role:super-admin'], 'prefix' => 'v1/administrator'], function(){
+    Route::post('/', [AdministratorController::class, 'store']);
+    Route::delete('/{id}', [AdministratorController::class, 'destroy']);
 });
