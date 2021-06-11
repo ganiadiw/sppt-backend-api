@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'occupation' => $this->occupation,
             'role' => $this->role,
-            'image_url' => $this->image_path !== null ? Storage::url($this->image_path) : null,
+            'image_url' => $this->image_path != null ? Storage::url($this->image_path) : null,
         ];
     }
 }
