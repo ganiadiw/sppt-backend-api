@@ -15,14 +15,16 @@ class CreateLandsTable extends Migration
     {
         Schema::create('lands', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('nop')->unique();
             $table->foreignId('owner_id')->constrained();
+            $table->string('name', 100);
             $table->integer('guardian_id');
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);
             $table->string('road', 100);
             $table->bigInteger('determination')->nullable();
-            $table->string('sppt_persil_number', 50);
+            $table->string('sppt_persil_number', 50)->nullable();
             $table->integer('land_area');
             $table->string('land_area_unit', 5);
             $table->integer('building_area');

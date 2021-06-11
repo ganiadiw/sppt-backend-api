@@ -23,6 +23,10 @@ class Owner extends Model
         'updated_at',
     ];
 
+    protected $with = [
+        'family',
+    ];
+
     public function lands()
     {
         return $this->hasMany(Land::class);

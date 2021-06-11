@@ -10,6 +10,7 @@ class Land extends Model
     use HasFactory;
 
     protected $fillable = [
+        'nop',
         'owner_id',
         'guardian_id',
         'rt',
@@ -29,6 +30,7 @@ class Land extends Model
         'updated_at',
     ];
 
+    protected $with = ['owner'];
     public function owner()
     {
         return $this->belongsTo(Owner::class);
