@@ -15,8 +15,11 @@ class OwnerSearchResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'family_id' => $this->family_id,
-            // 'nop' => 
+            'family_id' => $this->owner->family_id,
+            'nop' => $this->nop,
+            'taxpayer_name' => $this->owner->name,
+            'tax_object_name' => $this->name,
+            'guardian_id' => $this->guardian_id,
         ];
     }
 }

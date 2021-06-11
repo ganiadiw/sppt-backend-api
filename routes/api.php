@@ -29,6 +29,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
     Route::get('/sppt/families', [SpptController::class, 'familyIndex']);
     Route::get('/sppt/search/{nop}', [SpptController::class, 'ownerSearch']);
     Route::get('/sppt/{nop}', [SpptController::class, 'showSppt']);
+    Route::get('/sppt/update/{id}', [SpptController::class], 'update');
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:Super Admin'], 'prefix' => 'v1/administrator'], function(){
