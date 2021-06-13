@@ -14,7 +14,7 @@ class FamilyController extends Controller
     public function index()
     {
         try {
-            $families = Family::all();
+            $families = Family::orderBy('name')->get();
 
             return ResponseFormatter::success(
                 FamilyResource::collection($families),
