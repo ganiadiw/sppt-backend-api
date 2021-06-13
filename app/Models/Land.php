@@ -20,6 +20,7 @@ class Land extends Model
         'road',
         'determination',
         'sppt_persil_number',
+        'block_number',
         'land_area',
         'land_area_unit',
         'building_area',

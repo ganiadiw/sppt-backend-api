@@ -19,6 +19,7 @@ class MutationHistory extends Model
         'new_tax_object_name',
         'new_tax_object_road',
         'sppt_persil_number',
+        'block_number',
         'new_land_area',
         'new_land_area_unit',
         'new_building_area',
