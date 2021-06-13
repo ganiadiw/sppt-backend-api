@@ -23,13 +23,26 @@ class Owner extends Model
         'updated_at',
     ];
 
-    public function lands()
+    protected $with = [
+        'family',
+    ];
+
+    public function land()
     {
-        return $this->hasMany(Land::class);
+        return $this->hasOne(Land::class);
     }
 
     public function family()
     {
         return $this->belongsTo(Family::class);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($data) {
+            $data->land()->delete();
+        });
     }
 }

@@ -9,20 +9,18 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
 class ProfileController extends Controller
 {
-    public function showProfile()
+    public function show()
     {
         try {
             if (Auth::check()) {
                 return ResponseFormatter::success(
                     new UserResource(Auth::user()),
-                    'User profile has been laoaded'
+                    'User profile has been loaded'
                 );
             }
 
@@ -51,8 +49,8 @@ class ProfileController extends Controller
                 'image' => 'image|mimes:png,jpg,jpeg',
                 '_method' => 'required',
                 'old_password' => 'min:8',
-                'password' => 'min:8'
-            ]);            
+                'new_password' => 'min:8'
+            ]);           
 
             if (!Auth::check())
             {
@@ -77,7 +75,7 @@ class ProfileController extends Controller
             }
 
             //Check request password is null
-            if ($request->password == null){
+            if ($request->new_password == null){
                 $existingDatas = User::all()->except(Auth::id());
 
                 foreach ($existingDatas as $existingData) {
@@ -120,7 +118,7 @@ class ProfileController extends Controller
                 );
             }
 
-            if ($request->password != null){
+            if ($request->new_password != null){
                 $existingDatas = User::all()->except(Auth::id());
                 $payload = User::where('id', Auth::user()->id)->first();
 
@@ -162,13 +160,14 @@ class ProfileController extends Controller
                     'email' => $request->email,
                     'image_name' => $imageName,
                     'image_path' => $imagePath,
-                    'password' => bcrypt($request->password),
+                    'password' => bcrypt($request->new_password),
                 ]);
 
                 $user = User::where('id', Auth::user()->id)->first();
 
                 return ResponseFormatter::success(
-                    new UserResource($user)
+                    new UserResource($user),
+                    'Successfully update data'
                 );
             }
 

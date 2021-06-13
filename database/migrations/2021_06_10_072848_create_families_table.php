@@ -15,7 +15,6 @@ class CreateFamiliesTable extends Migration
     {
         Schema::create('families', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nop')->unique();
             $table->string('name', 50);
             $table->timestamps();
         });
