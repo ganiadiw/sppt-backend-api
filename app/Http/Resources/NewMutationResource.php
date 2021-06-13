@@ -29,6 +29,7 @@ class NewMutationResource extends JsonResource
                     ],
                     'determination' => $this->determination,
                     'sppt_persil_number' => $this->sppt_persil_number,
+                    'block_number' => $this->block_number,
                     'land_area' => $this->land_area,
                     'land_area_unit' => $this->land_area_unit,
                     'building_area' => $this->building_area,

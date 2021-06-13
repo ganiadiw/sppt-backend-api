@@ -106,6 +106,7 @@ class SpptController extends Controller
                 'road' => $request->tax_object_road,
                 'determination' => $request->determination,
                 'sppt_persil_number' => $request->sppt_persil_number,
+                'block_number' => $request->block_number,
                 'land_area' => $request->land_area,
                 'land_area_unit' => $request->land_area_unit,
                 'building_area' => $request->building_area,
@@ -180,30 +181,15 @@ class SpptController extends Controller
             }
 
             DB::beginTransaction();
-            if ($request->family_id == null) {
-                $family = Family::create([
-                    'name' => $request->name
-                ]);
-                $owner = Owner::create([
-                    'family_id' => $family->id,
-                    'name' => $request->taxpayer_name,
-                    'rt' => $request->taxpayer_rt,
-                    'rw' => $request->taxpayer_rw,
-                    'village' => $request->taxpayer_village,
-                    'road' => $request->taxpayer_road,
-                ]);
-            } else {
-                $owner = Owner::create([
-                    'family_id' => $request->family_id,
-                    'name' => $request->taxpayer_name,
-                    'rt' => $request->taxpayer_rt,
-                    'rw' => $request->taxpayer_rw,
-                    'village' => $request->taxpayer_village,
-                    'road' => $request->taxpayer_road,
-                ]);
+            $owner = Owner::create([
+                'family_id' => $request->family_id,
+                'name' => $request->taxpayer_name,
+                'rt' => $request->taxpayer_rt,
+                'rw' => $request->taxpayer_rw,
+                'village' => $request->taxpayer_village,
+                'road' => $request->taxpayer_road,
+            ]);
                 
-            }
-    
             $newLand = Land::create([
                 'nop' => $request->nop,
                 'name' => $request->name,
@@ -216,6 +202,7 @@ class SpptController extends Controller
                 'road' => $request->tax_object_road,
                 'determination' => $request->determination,
                 'sppt_persil_number' => $request->sppt_persil_number,
+                'block_number' => $request->block_number,
                 'land_area' => $request->land_area,
                 'land_area_unit' => $request->land_area_unit,
                 'building_area' => $request->building_area,
@@ -234,6 +221,7 @@ class SpptController extends Controller
                 'road' => $originLand->road,
                 'determination' => $originLand->determination,
                 'sppt_persil_number' => $originLand->sppt_persil_number,
+                'block_number' => $originLand->block_number,
                 'land_area' => $remainingArea,
                 'land_area_unit' => $originLand->land_area_unit,
                 'building_area' => $remainingBuildingArea,
@@ -254,6 +242,7 @@ class SpptController extends Controller
                 'new_tax_object_name' => $newLand->name,
                 'new_tax_object_road' => $newLand->road,
                 'sppt_persil_number' => $newLand->spt_persil_number,
+                'block_number' => $originLand->block_number,
                 'new_land_area' => $newLand->land_area,
                 'new_land_area_unit' => $newLand->land_area_unit,
                 'new_building_area' => $newLand->building_area,

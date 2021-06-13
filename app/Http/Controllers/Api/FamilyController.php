@@ -28,4 +28,64 @@ class FamilyController extends Controller
             );
         }
     }
+
+    public function store(Request $request)
+    {
+        try {
+            $family = Family::create([
+                'name' => $request->name,
+            ]);
+
+            return ResponseFormatter::success(
+                $family,
+                'Family data created successfully'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Can\'t create data',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            Family::where('id', $id)->update([
+                'name' => $request->name
+            ]);
+
+            $family = Family::find($id);
+
+            return ResponseFormatter::success(
+                $family,
+                'Family data updated successfully'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Can\'t update data',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $family = Family::findOrFail($id);
+
+            return ResponseFormatter::success(
+                $family,
+                'Family data loaded successfully'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Can\'t show data',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
 }

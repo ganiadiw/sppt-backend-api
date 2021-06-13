@@ -28,6 +28,11 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
     Route::patch('/profile/update', [ProfileController::class, 'update']);
 
     Route::get('/families', [FamilyController::class, 'index']);
+    Route::group(['prefix' => 'family'], function () {
+        Route::post('/', [FamilyController::class, 'store']);
+        Route::patch('/{id}', [FamilyController::class, 'update']);
+        Route::get('/{id}', [FamilyController::class, 'show']);
+    });
 
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'ownerSearch']);

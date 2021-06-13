@@ -24,6 +24,7 @@ class CreateMutationHistoriesTable extends Migration
             $table->string('new_tax_object_name');
             $table->string('new_tax_object_road');
             $table->string('sppt_persil_number')->nullable();
+            $table->string('block_number')->nullable();
             $table->integer('new_land_area');
             $table->string('new_land_area_unit');
             $table->integer('new_building_area');
