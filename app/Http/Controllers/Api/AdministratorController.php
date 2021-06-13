@@ -60,6 +60,8 @@ class AdministratorController extends Controller
                 'role' => 'admin'
             ]);
 
+            $user->assignrole('admin');
+
             return ResponseFormatter::success(
                 $user,
                 'User created successfully'

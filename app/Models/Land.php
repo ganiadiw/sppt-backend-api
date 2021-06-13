@@ -12,6 +12,7 @@ class Land extends Model
     protected $fillable = [
         'nop',
         'owner_id',
+        'name',
         'guardian_id',
         'rt',
         'rw',

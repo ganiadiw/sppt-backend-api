@@ -34,6 +34,7 @@ class SpptResource extends JsonResource
                 'building_area_unit' => $this->building_area_unit
             ],
             'taxpayer' => [
+                'id' => $this->owner->id,
                 'name' => $this->owner->name,
                 'address' => [
                     'rt' => $this->owner->rt,

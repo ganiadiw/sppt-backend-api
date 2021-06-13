@@ -8,7 +8,6 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthenticationController extends Controller
 {
@@ -25,19 +24,12 @@ class AuthenticationController extends Controller
             if (!Auth::attempt($credential)) {
                 return ResponseFormatter::error(
                     null,
-                    'Unautorized',
+                    'Invalid username or password',
                     401
                 );
             }
 
             $user = User::where('username', $request->username)->first();
-            if (!Hash::check($request->password, $user->password)) {
-                return ResponseFormatter::error(
-                    null,
-                    'Unautorized',
-                    401
-                );
-            }
 
             $token = $user->createToken('AuthorizationToken')->plainTextToken;
 
@@ -56,10 +48,10 @@ class AuthenticationController extends Controller
             ], 'Authenticated Successfully');
 
         } catch (Exception $e) {
-            return ResponseFormatter::error([
-                'message' => 'Something went wrong',
-                'error' => $e
-            ], 'Authentication Failed');
+            return ResponseFormatter::error(
+                'Something wrong',
+                $e->getMessage()
+            );
         }
     }
 

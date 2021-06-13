@@ -31,7 +31,7 @@ class LandSeeder extends Seeder
         ]);
         Land::create([
             'nop' => 350501001000110010,
-            'owner_id' => 1,
+            'owner_id' => 2,
             'name' => 'Gani',
             'guardian_id' => 1,
             'rt' => '001',
