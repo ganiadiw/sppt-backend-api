@@ -8,16 +8,24 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthenticationController extends Controller
 {
     public function login(Request $request)
     {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'username' => 'required',
                 'password' => 'required',
             ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
 
             $credential = request(['username', 'password']);
 
@@ -31,7 +39,7 @@ class AuthenticationController extends Controller
 
             $user = User::where('username', $request->username)->first();
 
-            $token = $user->createToken('AuthorizationToken')->plainTextToken;
+            $token = $user->createToken(Auth::user()->name)->plainTextToken;
 
             if ($user->hasRole('super-admin')) {
                 return ResponseFormatter::success([

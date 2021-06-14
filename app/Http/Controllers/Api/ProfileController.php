@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -25,7 +26,7 @@ class ProfileController extends Controller
             }
 
             return ResponseFormatter::error(
-                'Unauthenticated',
+                'Unauthorized',
                 401
             );
 
@@ -40,8 +41,8 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        try {
-            $this->validate($request, [
+        try {            
+            $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'occupation' => 'required',
                 'username' => 'required',
@@ -50,12 +51,19 @@ class ProfileController extends Controller
                 '_method' => 'required',
                 'old_password' => 'min:8',
                 'new_password' => 'min:8'
-            ]);           
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
 
             if (!Auth::check())
             {
                 return ResponseFormatter::error(
-                    'Unauthenticated',
+                    'Unauthorized',
                     401
                 );
             }
@@ -125,7 +133,7 @@ class ProfileController extends Controller
                 if (!Hash::check($request->old_password, $payload->password)) {
                     throw new Exception (
                         ResponseFormatter::error(
-                            'null',
+                            null,
                             'Wrong old password',
                             406
                         )

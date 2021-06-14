@@ -8,6 +8,7 @@ use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FamilyController extends Controller
 {
@@ -24,7 +25,7 @@ class FamilyController extends Controller
             return ResponseFormatter::error(
                 'Load data failed',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -32,6 +33,17 @@ class FamilyController extends Controller
     public function store(Request $request)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
+
             $family = Family::create([
                 'name' => $request->name,
             ]);
@@ -43,8 +55,7 @@ class FamilyController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Can\'t create data',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }
     }
@@ -52,6 +63,18 @@ class FamilyController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'id',
+                'name' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
+
             Family::where('id', $id)->update([
                 'name' => $request->name
             ]);
@@ -65,8 +88,7 @@ class FamilyController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Can\'t update data',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }
     }
@@ -83,8 +105,7 @@ class FamilyController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Can\'t show data',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }
     }

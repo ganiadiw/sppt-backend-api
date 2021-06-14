@@ -8,7 +8,6 @@ use App\Http\Resources\NewMutationResource;
 use App\Http\Resources\OriginMutationResource;
 use App\Http\Resources\OwnerSearchResource;
 use App\Http\Resources\SpptResource;
-use App\Models\Family;
 use App\Models\Land;
 use App\Models\MutationHistory;
 use App\Models\Owner;
@@ -16,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class SpptController extends Controller
 {
@@ -61,7 +61,7 @@ class SpptController extends Controller
     public function spptUpdate(Request $request, $nop)
     {
         try {
-            $this->validate($request, [
+            $validator = Validator::make($request->all(), [
                 'nop' => 'required',
                 'guardian_id' => 'required',
                 'tax_object_name' => 'required',
@@ -80,6 +80,13 @@ class SpptController extends Controller
                 'taxpayer_road' => 'required',
                 'family_id' => 'required',
             ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
             
             DB::beginTransaction();
             $land = Land::where('nop', $nop)->first();
@@ -142,7 +149,7 @@ class SpptController extends Controller
     public function mutation(Request $request)
     {
         try {
-            $this->validate($request, [
+            $validator = Validator::make($request->all(), [
                 'source_owner_id' => 'required',
                 'taxpayer_name' => 'required',
                 'taxpayer_rt'  => 'required',
@@ -162,6 +169,13 @@ class SpptController extends Controller
                 'building_area' => 'required',
                 'building_area_unit' => 'required',
             ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
     
             $land = Land::where('nop', $request->nop_target)->first();
             
@@ -272,8 +286,7 @@ class SpptController extends Controller
             DB::rollBack();
             return ResponseFormatter::error(
                 'Can\'t create mutation SPPT data',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }   
     }
@@ -289,8 +302,7 @@ class SpptController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Something wrong',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }
     }

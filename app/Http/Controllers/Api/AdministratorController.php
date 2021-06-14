@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AdministratorController extends Controller
 {
@@ -25,7 +26,7 @@ class AdministratorController extends Controller
             return ResponseFormatter::error(
                 'Load data failed',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -33,13 +34,20 @@ class AdministratorController extends Controller
     public function store (Request $request)
     {
         try {
-            $this->validate($request, [
+            $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'username' => 'required|unique:users,username',
                 'email' => 'required|unique:users,email',
                 'occupation' => 'required',
                 'password' => 'required|min:8'
             ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
 
             $user = User::where('username', $request->username)->where('email', $request->email)->first();
 
@@ -72,7 +80,6 @@ class AdministratorController extends Controller
             return ResponseFormatter::error(
                 'Something wrong!',
                 $e->getMessage(),
-                404
             );
         }
     }
@@ -89,8 +96,7 @@ class AdministratorController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Something wrong',
-                $e->getMessage(),
-                400
+                $e->getMessage()
             );
         }
     }
