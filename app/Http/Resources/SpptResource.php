@@ -15,6 +15,7 @@ class SpptResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'tax_object' => [
                 'id' => $this->id,
                 'nop' => $this->nop,
