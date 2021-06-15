@@ -64,8 +64,8 @@ class FamilyController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id' => 'id',
-                'name' => 'required'
+                'id' => 'required',
+                'name' => 'required|max:50'
             ]);
 
             if ($validator->fails()) {

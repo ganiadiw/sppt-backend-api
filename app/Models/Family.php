@@ -10,7 +10,6 @@ class Family extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nop',
         'name'
     ];
 
