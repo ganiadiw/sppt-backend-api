@@ -148,7 +148,7 @@ class SpptController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'source_owner_id' => 'required',
+                'owner_id_target' => 'required',
                 'nop' => 'required',
                 'nop_target' => 'required',
                 'taxpayer_name' => 'required',
@@ -237,7 +237,7 @@ class SpptController extends Controller
             ]);
     
             $newOwner = Owner::where('id', $owner->id)->first();
-            $originOwner = Owner::where('id', $request->source_owner_id)->first();
+            $originOwner = Owner::where('id', $request->owner_id_target)->first();
             $newLand = Land::where('nop', $request->nop)->first();
 
             MutationHistory::create([
@@ -265,15 +265,13 @@ class SpptController extends Controller
                 'building_source_area_unit' => $originLand->building_area,
             ]);
 
-            // DB::commit();
-            DB::rollBack();
+            DB::commit();
 
             return ResponseFormatter::success(
                 [
                     new OriginMutationResource($originLand),
                     new NewMutationResource($newLand),
                 ],
-                // $newLand,
                 'Data successfully updated'
             );
         } catch (Exception $e) {
