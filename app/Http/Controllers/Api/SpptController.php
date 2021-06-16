@@ -148,6 +148,7 @@ class SpptController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'source_owner_id' => 'required',
                 'nop' => 'required',
                 'nop_target' => 'required',
                 'taxpayer_name' => 'required',
@@ -246,7 +247,6 @@ class SpptController extends Controller
                 'new_taxpayer_road' => $newOwner->road,
                 'new_nop' => $newLand->nop,
                 'guardian_id' => $newLand->guardian_id,
-                'new_tax_object_name' => $newLand->name,
                 'new_tax_object_road' => $newLand->road,
                 'sppt_persil_number' => $newLand->spt_persil_number,
                 'block_number' => $originLand->block_number,
@@ -257,22 +257,23 @@ class SpptController extends Controller
                 'taxpayer_source_name' => $originOwner->name,
                 'taxpayer_source_village' => $originOwner->village,
                 'taxpayer_source_road' => $originOwner->road,
-                'nop_source' => $originLand->nop,
-                'tax_source_object_name' => $originLand->name,
-                'tax_source_object_road' => $originLand->road,
+                'source_nop' => $originLand->nop,
+                'tax_object_road' => $originLand->road,
                 'land_source_area' => $originLand->land_area,
                 'land_source_area_unit' => $originLand->land_area_unit,
                 'building_source_area' => $originLand->building_area,
                 'building_source_area_unit' => $originLand->building_area,
             ]);
 
-            DB::commit();
+            // DB::commit();
+            DB::rollBack();
 
             return ResponseFormatter::success(
                 [
                     new OriginMutationResource($originLand),
                     new NewMutationResource($newLand),
                 ],
+                // $newLand,
                 'Data successfully updated'
             );
         } catch (Exception $e) {

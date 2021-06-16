@@ -19,7 +19,6 @@ class LandSeeder extends Seeder
         Land::create([
             'nop' => 350518000600100010,
             'owner_id' => 1,
-            'name' => 'Jadid',
             'guardian_id' => 1,
             'rt' => '001',
             'rw' => '001',
@@ -35,7 +34,6 @@ class LandSeeder extends Seeder
         Land::create([
             'nop' => 350518000600110010,
             'owner_id' => 2,
-            'name' => 'Gani',
             'guardian_id' => 1,
             'rt' => '001',
             'rw' => '001',
@@ -56,7 +54,6 @@ class LandSeeder extends Seeder
             Land::create([
                 'nop' => 3505180006 . $faker->numberBetween(0000000, 9999999) . 0,
                 'owner_id' => $i,
-                'name' => $faker->firstName() . ' ' . $faker->lastName(),
                 'guardian_id' => $faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8]),
                 'rt' => $faker->randomElement(['001', '002', '003', '004', '005', '006', '008', '009', '010']),
                 'rw' => $faker->randomElement(['001', '002', '003', '004']),
