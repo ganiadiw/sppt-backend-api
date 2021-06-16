@@ -64,7 +64,6 @@ class SpptController extends Controller
             $validator = Validator::make($request->all(), [
                 'nop' => 'required',
                 'guardian_id' => 'required',
-                'tax_object_name' => 'required',
                 'tax_object_rt' => 'required',
                 'tax_object_rw' => 'required',
                 'tax_object_village' => 'required',
@@ -105,7 +104,6 @@ class SpptController extends Controller
             Land::where('nop', $nop)->update([
                 'nop' => $request->nop,
                 'owner_id' => $land->owner_id,
-                'name' => $request->tax_object_name,
                 'guardian_id' => $request->guardian_id,
                 'rt' => $request->tax_object_rt,
                 'rw' => $request->tax_object_rw,
@@ -150,16 +148,14 @@ class SpptController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'source_owner_id' => 'required',
+                'nop' => 'required',
+                'nop_target' => 'required',
                 'taxpayer_name' => 'required',
                 'taxpayer_rt'  => 'required',
                 'taxpayer_rw' => 'required',
                 'taxpayer_village' => 'required',
                 'taxpayer_road' => 'required',
-                'nop' => 'required',
-                'nop_target' => 'required',
                 'guardian_id' => 'required',
-                'tax_object_name' => 'required',
                 'tax_object_rt' => 'required',
                 'tax_object_rw' => 'required',
                 'tax_object_village' => 'required',
@@ -206,10 +202,8 @@ class SpptController extends Controller
                 
             $newLand = Land::create([
                 'nop' => $request->nop,
-                'name' => $request->name,
                 'owner_id' => $owner->id,
                 'guardian_id' => $request->guardian_id,
-                'name' => $request->tax_object_name,
                 'rt' => $request->tax_object_rt,
                 'rw' => $request->tax_object_rw,
                 'village' => $request->tax_object_village,
@@ -227,7 +221,6 @@ class SpptController extends Controller
             Land::where('nop', $request->nop_target)->update([
                 'nop' => $originLand->nop,
                 'owner_id' => $originLand->owner_id,
-                'name' => $originLand->name,
                 'guardian_id' => $originLand->guardian_id,
                 'rt' => $originLand->rt,
                 'rw' => $originLand->rw,

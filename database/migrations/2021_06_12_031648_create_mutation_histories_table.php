@@ -16,15 +16,15 @@ class CreateMutationHistoriesTable extends Migration
         Schema::create('mutation_histories', function (Blueprint $table) {
             $table->id();
             $table->string('modified_by');
+            $table->bigInteger('source_nop');
+            $table->bigInteger('new_nop');
+            $table->string('tax_object_road');
+            $table->integer('guardian_id');
+            $table->string('block_number')->nullable();
+            $table->string('sppt_persil_number')->nullable();
             $table->string('new_taxpayer_name');
             $table->string('new_taxpayer_village');
             $table->string('new_taxpayer_road');
-            $table->bigInteger('new_nop');
-            $table->integer('guardian_id');
-            $table->string('new_tax_object_name');
-            $table->string('new_tax_object_road');
-            $table->string('sppt_persil_number')->nullable();
-            $table->string('block_number')->nullable();
             $table->integer('new_land_area');
             $table->string('new_land_area_unit');
             $table->integer('new_building_area');
@@ -32,9 +32,6 @@ class CreateMutationHistoriesTable extends Migration
             $table->string('taxpayer_source_name');
             $table->string('taxpayer_source_village');
             $table->string('taxpayer_source_road');
-            $table->bigInteger('nop_source');
-            $table->string('tax_source_object_name');
-            $table->string('tax_source_object_road');
             $table->integer('land_source_area');
             $table->string('land_source_area_unit');
             $table->integer('building_source_area');
