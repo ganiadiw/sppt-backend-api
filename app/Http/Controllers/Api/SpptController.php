@@ -148,7 +148,6 @@ class SpptController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'owner_id_target' => 'required',
                 'nop' => 'required',
                 'nop_target' => 'required',
                 'taxpayer_name' => 'required',
@@ -237,7 +236,7 @@ class SpptController extends Controller
             ]);
     
             $newOwner = Owner::where('id', $owner->id)->first();
-            $originOwner = Owner::where('id', $request->owner_id_target)->first();
+            $originOwner = Owner::where('id', $originLand->owner->id)->first();
             $newLand = Land::where('nop', $request->nop)->first();
 
             MutationHistory::create([
