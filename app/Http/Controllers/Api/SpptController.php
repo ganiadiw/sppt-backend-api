@@ -58,6 +58,89 @@ class SpptController extends Controller
         }
     }
 
+    public function createSppt(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'nop' => 'required|unique:lands,nop',
+                'taxpayer_name' => 'required',
+                'taxpayer_rt'  => 'required',
+                'taxpayer_rw' => 'required',
+                'taxpayer_village' => 'required',
+                'taxpayer_road' => 'required',
+                'guardian_id' => 'required',
+                'tax_object_rt' => 'required',
+                'tax_object_rw' => 'required',
+                'tax_object_village' => 'required',
+                'tax_object_road' => 'required',
+                'land_area' => 'required',
+                'land_area_unit' => 'required',
+                'building_area' => 'required',
+                'building_area_unit' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
+
+            $land = Land::where('nop', $request->nop)->first();
+
+            if ($land) {
+                return ResponseFormatter::error(
+                    null,
+                    'NOP already exist',
+                    409
+                );
+            }
+
+            DB::beginTransaction();
+            $owner = Owner::create([
+                'family_id' => $request->family_id,
+                'name' => $request->taxpayer_name,
+                'rt' => $request->taxpayer_rt,
+                'rw' => $request->taxpayer_rw,
+                'village' => $request->taxpayer_village,
+                'road' => $request->taxpayer_road,
+            ]);
+                
+            $land = Land::create([
+                'nop' => $request->nop,
+                'owner_id' => $owner->id,
+                'guardian_id' => $request->guardian_id,
+                'rt' => $request->tax_object_rt,
+                'rw' => $request->tax_object_rw,
+                'village' => $request->tax_object_village,
+                'road' => $request->tax_object_road,
+                'determination' => $request->determination,
+                'sppt_persil_number' => $request->sppt_persil_number,
+                'block_number' => $request->block_number,
+                'land_area' => $request->land_area,
+                'land_area_unit' => $request->land_area_unit,
+                'building_area' => $request->building_area,
+                'building_area_unit' => $request->building_area_unit,
+            ]);
+            
+            DB::commit();
+
+            $sppt = Land::where('nop', $request->nop)->first();
+
+            return ResponseFormatter::success(
+                new SpptResource($sppt),
+                'Data successfully updated'
+            );
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ResponseFormatter::error(
+                'Can\'t create new SPPT data',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
+
     public function spptUpdate(Request $request, $nop)
     {
         try {

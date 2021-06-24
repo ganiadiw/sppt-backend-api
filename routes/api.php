@@ -35,6 +35,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
     });
 
     Route::group(['prefix' => 'sppt'], function () {
+        Route::post('/', [SpptController::class, 'createSppt']);
         Route::get('/search/{nop}', [SpptController::class, 'ownerSearch']);
         Route::get('/{nop}', [SpptController::class, 'showSppt']);
         Route::patch('/update/{nop}', [SpptController::class, 'spptUpdate']);
