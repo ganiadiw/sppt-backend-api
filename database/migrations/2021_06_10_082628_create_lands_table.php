@@ -17,7 +17,6 @@ class CreateLandsTable extends Migration
             $table->id();
             $table->bigInteger('nop')->unique();
             $table->foreignId('owner_id')->constrained();
-            $table->integer('guardian_id');
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);

@@ -86,15 +86,15 @@ class SpptController extends Controller
                 );
             }
 
-            $land = Land::where('nop', $request->nop)->first();
+            // $land = Land::where('nop', $request->nop)->first();
 
-            if ($land) {
-                return ResponseFormatter::error(
-                    null,
-                    'NOP already exist',
-                    409
-                );
-            }
+            // if ($land) {
+            //     return ResponseFormatter::error(
+            //         null,
+            //         'NOP already exist',
+            //         409
+            //     );
+            // }
 
             DB::beginTransaction();
             $owner = Owner::create([
@@ -172,7 +172,7 @@ class SpptController extends Controller
             
             DB::beginTransaction();
             $land = Land::where('nop', $nop)->first();
-            $existingDatas = Land::all()->except($land->nop);
+            $existingDatas = Land::all()->except($land->id);
 
             foreach ($existingDatas as $existingData) {
                 if ($request->nop == $existingData->nop){
@@ -363,6 +363,74 @@ class SpptController extends Controller
                 $e->getMessage()
             );
         }   
+    }
+
+    public function showSpptByGuardian($guardian_id)
+    {
+        try {
+            $sppt = Land::where('guardian_id', $guardian_id)->get();
+
+            return ResponseFormatter::success(
+                SpptResource::collection($sppt),
+                'Data successfully loaded'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Load data failed',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
+
+    public function updateSpptGuardianId(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'sppt_objects' => 'required',
+                'sppt_objects.*.nop' => 'required',
+                'sppt_objects.*.guardian_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
+
+            foreach ($request->sppt_objects as $key => $value) {
+                $landData = Land::where('nop', $value['nop'])->first();
+
+                $land = Land::where('nop', $landData->nop)->update([
+                    'nop' => $landData->nop,
+                    'owner_id' => $landData->owner_id,
+                    'guardian_id' => $value['guardian_id'],
+                    'rt' => $landData->rt,
+                    'rw' => $landData->rw,
+                    'village' => $landData->village,
+                    'road' => $landData->road,
+                    'determination' => $landData->determination,
+                    'sppt_persil_number' => $landData->sppt_persil_number,
+                    'block_number' => $landData->block_number,
+                    'land_area' => $landData->land_area,
+                    'land_area_unit' => $landData->land_area_unit,
+                    'building_area' => $landData->building_area,
+                    'building_area_unit' => $landData->building_area_unit,
+                ]);
+            }
+
+            return ResponseFormatter::success(
+                'Data successfully updated',
+                'Data successfully updated'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Can\'t update SPPT data',
+                $e->getMessage(),
+                400
+            );
+        }
     }
 
     public function destroy ($id)

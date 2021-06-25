@@ -36,4 +36,9 @@ class Land extends Model
     {
         return $this->belongsTo(Owner::class);
     }
+
+    public function guardian()
+    {
+        return $this->belongsTo(Guardian::class);
+    }
 }
