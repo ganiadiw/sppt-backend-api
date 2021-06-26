@@ -27,7 +27,7 @@ class SpptController extends Controller
             $owners = Owner::with('land')->where('family_id', $owner->family_id)->get();
 
             return ResponseFormatter::success(
-                $owners,
+                OwnerSearchResource::collection($owners),
                 'SPPT families data successfully loaded'
             );
 
