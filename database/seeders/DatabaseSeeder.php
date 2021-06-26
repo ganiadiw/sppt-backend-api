@@ -20,4 +20,5 @@ class DatabaseSeeder extends Seeder
         $this->call(GuardianSeeder::class);
         $this->call(LandSeeder::class);
     }
+
 }

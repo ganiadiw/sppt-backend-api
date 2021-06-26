@@ -20,13 +20,13 @@ class CreateLandsTable extends Migration
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);
-            $table->string('road', 100);
-            $table->bigInteger('determination')->nullable();
+            $table->string('road', 100)->nullable();
+            $table->string('determination')->nullable();
             $table->string('sppt_persil_number', 50)->nullable();
-            $table->string('block_number', 5)->nullable();
-            $table->integer('land_area');
+            $table->string('block_number', 10)->nullable();
+            $table->double('land_area');
             $table->string('land_area_unit', 5);
-            $table->integer('building_area');
+            $table->double('building_area')->nullable();
             $table->string('building_area_unit', 5);
             $table->timestamps();
         });

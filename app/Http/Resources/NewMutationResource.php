@@ -16,8 +16,8 @@ class NewMutationResource extends JsonResource
     {
         return [
             'new_data' => [
+                'id' => $this->id,                
                 'tax_object' => [
-                    'id' => $this->id,
                     'nop' => $this->nop,
                     'guardian_id' => $this->guardian_id,
                     'address' => [
@@ -35,7 +35,6 @@ class NewMutationResource extends JsonResource
                     'building_area_unit' => $this->building_area_unit
                 ],
                 'taxpayer' => [
-                    'id' => $this->owner->id,
                     'name' => $this->owner->name,
                     'address' => [
                         'rt' => $this->owner->rt,

@@ -16,11 +16,11 @@ class CreateOwnersTable extends Migration
         Schema::create('owners', function (Blueprint $table) {
             $table->id();
             $table->foreignId('family_id')->constrained();
-            $table->string('name', 50);
+            $table->string('name', 100);
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);
-            $table->string('road', 100);
+            $table->string('road', 100)->nullable();
             $table->timestamps();
         });
     }

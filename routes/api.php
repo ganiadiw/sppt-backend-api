@@ -44,7 +44,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
         Route::get('guardian/{guardian_id}', [SpptController::class, 'showSpptByGuardian']); // OK
     });
 
-    Route::get('/guardian', [GuardianController::class, 'index']); // OK
+    Route::get('/guardians', [GuardianController::class, 'index']); // OK
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:Super Admin'], 'prefix' => 'v1'], function () {
