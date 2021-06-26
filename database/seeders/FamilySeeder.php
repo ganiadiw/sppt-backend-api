@@ -27,24 +27,24 @@ class FamilySeeder extends CsvSeeder
 
         parent::run();
 
-        Family::create([
-            'name' => 'Akbaruddin Nurullah',
-        ]);
-        Family::create([
-            'name' => 'Sobari',
-        ]);
-        Family::create([
-            'name' => 'Gani Adi Wiranata',
-        ]);
-        Family::create([
-            'name' => 'Jadid',
-        ]);
-        Family::create([
-            'name' => 'Badris Sholeh Rahmatullah',
-        ]);
-        Family::create([
-            'name' => 'Muhammad Iqbal Naufal Ilmi',
-        ]);
+        // Family::create([
+        //     'name' => 'Akbaruddin Nurullah',
+        // ]);
+        // Family::create([
+        //     'name' => 'Sobari',
+        // ]);
+        // Family::create([
+        //     'name' => 'Gani Adi Wiranata',
+        // ]);
+        // Family::create([
+        //     'name' => 'Jadid',
+        // ]);
+        // Family::create([
+        //     'name' => 'Badris Sholeh Rahmatullah',
+        // ]);
+        // Family::create([
+        //     'name' => 'Muhammad Iqbal Naufal Ilmi',
+        // ]);
         
     }
 }

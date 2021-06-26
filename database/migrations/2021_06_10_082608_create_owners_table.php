@@ -20,7 +20,7 @@ class CreateOwnersTable extends Migration
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);
-            $table->string('road', 100)->nul;
+            $table->string('road', 100)->nullable();
             $table->timestamps();
         });
     }

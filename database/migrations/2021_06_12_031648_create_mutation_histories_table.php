@@ -24,14 +24,14 @@ class CreateMutationHistoriesTable extends Migration
             $table->string('sppt_persil_number')->nullable();
             $table->string('new_taxpayer_name');
             $table->string('new_taxpayer_village');
-            $table->string('new_taxpayer_road');
+            $table->string('new_taxpayer_road')->nullable();
             $table->double('new_land_area');
             $table->string('new_land_area_unit');
             $table->double('new_building_area');
             $table->string('new_building_area_unit');
             $table->string('taxpayer_source_name');
             $table->string('taxpayer_source_village');
-            $table->string('taxpayer_source_road');
+            $table->string('taxpayer_source_road')->nullable();
             $table->double('land_source_area');
             $table->string('land_source_area_unit');
             $table->double('building_source_area');
