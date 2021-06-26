@@ -86,16 +86,6 @@ class SpptController extends Controller
                 );
             }
 
-            // $land = Land::where('nop', $request->nop)->first();
-
-            // if ($land) {
-            //     return ResponseFormatter::error(
-            //         null,
-            //         'NOP already exist',
-            //         409
-            //     );
-            // }
-
             DB::beginTransaction();
             $owner = Owner::create([
                 'family_id' => $request->family_id,
@@ -400,23 +390,23 @@ class SpptController extends Controller
             }
 
             foreach ($request->sppt_objects as $key => $value) {
-                $landData = Land::where('nop', $value['nop'])->first();
+                $land = Land::where('nop', $value['nop'])->first();
 
-                $land = Land::where('nop', $landData->nop)->update([
-                    'nop' => $landData->nop,
-                    'owner_id' => $landData->owner_id,
+                Land::where('nop', $land->nop)->update([
+                    'nop' => $land->nop,
+                    'owner_id' => $land->owner_id,
                     'guardian_id' => $value['guardian_id'],
-                    'rt' => $landData->rt,
-                    'rw' => $landData->rw,
-                    'village' => $landData->village,
-                    'road' => $landData->road,
-                    'determination' => $landData->determination,
-                    'sppt_persil_number' => $landData->sppt_persil_number,
-                    'block_number' => $landData->block_number,
-                    'land_area' => $landData->land_area,
-                    'land_area_unit' => $landData->land_area_unit,
-                    'building_area' => $landData->building_area,
-                    'building_area_unit' => $landData->building_area_unit,
+                    'rt' => $land->rt,
+                    'rw' => $land->rw,
+                    'village' => $land->village,
+                    'road' => $land->road,
+                    'determination' => $land->determination,
+                    'sppt_persil_number' => $land->sppt_persil_number,
+                    'block_number' => $land->block_number,
+                    'land_area' => $land->land_area,
+                    'land_area_unit' => $land->land_area_unit,
+                    'building_area' => $land->building_area,
+                    'building_area_unit' => $land->building_area_unit,
                 ]);
             }
 

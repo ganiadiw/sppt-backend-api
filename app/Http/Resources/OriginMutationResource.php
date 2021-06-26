@@ -16,8 +16,8 @@ class OriginMutationResource extends JsonResource
     {
         return [
             'origin_data' => [
+                'id' => $this->id,
                 'tax_object' => [
-                    'id' => $this->id,
                     'guardian_id' => $this->guardian_id,
                     'address' => [
                         'rt' => $this->rt,
@@ -34,7 +34,6 @@ class OriginMutationResource extends JsonResource
                     'building_area_unit' => $this->building_area_unit
                 ],
                 'taxpayer' => [
-                    'id' => $this->owner->id,
                     'name' => $this->owner->name,
                     'address' => [
                         'rt' => $this->owner->rt,

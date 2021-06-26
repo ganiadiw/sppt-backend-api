@@ -19,7 +19,6 @@ class OwnerSearchResource extends JsonResource
             'family_name' => $this->family->name,
             'nop' => $this->land->nop,
             'taxpayer_name' => $this->name,
-            'tax_object_name' => $this->land->name,
             'guardian_id' => $this->land->guardian_id,
         ];
     }
