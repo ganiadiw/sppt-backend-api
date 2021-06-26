@@ -25,21 +25,20 @@ class CreateMutationHistoriesTable extends Migration
             $table->string('new_taxpayer_name');
             $table->string('new_taxpayer_village');
             $table->string('new_taxpayer_road');
-            $table->integer('new_land_area');
+            $table->double('new_land_area');
             $table->string('new_land_area_unit');
-            $table->integer('new_building_area');
+            $table->double('new_building_area');
             $table->string('new_building_area_unit');
             $table->string('taxpayer_source_name');
             $table->string('taxpayer_source_village');
             $table->string('taxpayer_source_road');
-            $table->integer('land_source_area');
+            $table->double('land_source_area');
             $table->string('land_source_area_unit');
-            $table->integer('building_source_area');
+            $table->double('building_source_area');
             $table->string('building_source_area_unit');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      *

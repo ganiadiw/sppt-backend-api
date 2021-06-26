@@ -24,9 +24,9 @@ class CreateLandsTable extends Migration
             $table->bigInteger('determination')->nullable();
             $table->string('sppt_persil_number', 50)->nullable();
             $table->string('block_number', 5)->nullable();
-            $table->integer('land_area');
+            $table->double('land_area');
             $table->string('land_area_unit', 5);
-            $table->integer('building_area');
+            $table->double('building_area');
             $table->string('building_area_unit', 5);
             $table->timestamps();
         });

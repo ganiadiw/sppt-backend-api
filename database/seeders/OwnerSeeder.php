@@ -5,10 +5,16 @@ namespace Database\Seeders;
 use App\Models\Owner;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Flynsarmy\CsvSeeder\CsvSeeder;
 use Illuminate\Support\Facades\DB;
 
-class OwnerSeeder extends Seeder
+class OwnerSeeder extends CsvSeeder
 {
+    public function __construct()
+    {
+        $this->table = 'owners';
+        $this->filename = database_path().'/seeders/csvs/owner.csv';
+    }
     /**
      * Run the database seeds.
      *
@@ -16,6 +22,12 @@ class OwnerSeeder extends Seeder
      */
     public function run()
     {
+        DB::disableQueryLog();
+
+        DB::table($this->table);
+
+        parent::run();
+
         Owner::create([
             'family_id' => 4,
             'name' => 'Jadid',
@@ -74,11 +86,10 @@ class OwnerSeeder extends Seeder
         ]);
 
         $faker = Faker::create('id_ID');
-        $family = DB::table('families')->count();
 
         for ($i = 1; $i <= 43; $i++) {
             Owner::create([
-                'family_id' => $faker->numberBetween(1, $family),
+                'family_id' => $faker->numberBetween(253, 258),
                 'name' => $faker->firstName() . ' ' . $faker->lastName(),
                 'rt' => $faker->randomElement(['001', '002', '003', '004', '005', '006', '008', '009', '010']),
                 'rw' => $faker->randomElement(['001', '002', '003', '004']),
