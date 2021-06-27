@@ -17,6 +17,10 @@ class FamilyResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'rt' => $this->rt,
+            'rw' => $this->rw,
+            'village' => $this->village,
+            'road' => $this->road
         ];
     }
 }

@@ -34,7 +34,10 @@ class FamilyController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required'
+                'name' => 'required',
+                'rt' => 'required',
+                'rw' => 'required',
+                'village' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -46,6 +49,10 @@ class FamilyController extends Controller
 
             $family = Family::create([
                 'name' => $request->name,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'village' => $request->village,
+                'road' => $request->road
             ]);
 
             return ResponseFormatter::success(
@@ -65,7 +72,11 @@ class FamilyController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'name' => 'required|max:50'
+                'name' => 'required',
+                'rt' => 'required',
+                'rw' => 'required',
+                'village' => 'required'
+                
             ]);
 
             if ($validator->fails()) {
@@ -76,7 +87,11 @@ class FamilyController extends Controller
             }
 
             Family::where('id', $id)->update([
-                'name' => $request->name
+                'name' => $request->name,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'village' => $request->village,
+                'road' => $request->road
             ]);
 
             $family = Family::find($id);
@@ -100,6 +115,23 @@ class FamilyController extends Controller
 
             return ResponseFormatter::success(
                 $family,
+                'Family data loaded successfully'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Can\'t show data',
+                $e->getMessage()
+            );
+        }
+    }
+
+    public function showByName($name)
+    {
+        try {
+            $families = Family::where('name', 'LIKE', '%' . $name . '%')->get();
+
+            return ResponseFormatter::success(
+                $families,
                 'Family data loaded successfully'
             );
         } catch (Exception $e) {

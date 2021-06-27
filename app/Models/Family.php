@@ -10,7 +10,11 @@ class Family extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'rt',
+        'rw',
+        'village',
+        'road',
     ];
 
     protected $hidden = [
