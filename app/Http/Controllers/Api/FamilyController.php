@@ -23,7 +23,7 @@ class FamilyController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Families data failed to load',
                 $e->getMessage(),
                 404
             );
@@ -57,11 +57,11 @@ class FamilyController extends Controller
 
             return ResponseFormatter::success(
                 $family,
-                'Family data created successfully'
+                'Family data was successfully created'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t create data',
+                'Failed to create family data',
                 $e->getMessage()
             );
         }
@@ -98,11 +98,11 @@ class FamilyController extends Controller
 
             return ResponseFormatter::success(
                 $family,
-                'Family data updated successfully'
+                'Family data successfully updated'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t update data',
+                'Failed to update family data',
                 $e->getMessage()
             );
         }
@@ -115,11 +115,11 @@ class FamilyController extends Controller
 
             return ResponseFormatter::success(
                 $family,
-                'Family data loaded successfully'
+                'Family data successfully loaded'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t show data',
+                'Failed to load family data',
                 $e->getMessage()
             );
         }
@@ -132,11 +132,11 @@ class FamilyController extends Controller
 
             return ResponseFormatter::success(
                 $families,
-                'Family data loaded successfully'
+                'Families data successfully loaded'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t show data',
+                'Failed to load families data',
                 $e->getMessage()
             );
         }

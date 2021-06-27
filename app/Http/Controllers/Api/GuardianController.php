@@ -21,12 +21,30 @@ class GuardianController extends Controller
 
             return ResponseFormatter::success(
                 GuardianResource::collection($guardians),
-                'Successfully get guardians data'
+                'Guardians data successfully loaded'
             );
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Failed to load guardians data',
+                $e->getMessage(),
+                404
+            );
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $guardian = Guardian::findOrFail($id);
+
+            return ResponseFormatter::success(
+                new GuardianResource($guardian),
+                'GUardian data successfully loaded'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Failed to load guardian data',
                 $e->getMessage(),
                 404
             );
@@ -56,11 +74,11 @@ class GuardianController extends Controller
             $guardian = Guardian::find($request->id);
             return ResponseFormatter::success(
                 $guardian,
-                'Guardian data created successfully'
+                'Guardian data was created successfully'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t create data',
+                'Failed to create guardian data',
                 $e->getMessage()
             );
         }
@@ -93,11 +111,11 @@ class GuardianController extends Controller
 
             return ResponseFormatter::success(
                 $guardian,
-                'Guardian data updated successfully'
+                'Guardian data successfully updated'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t update data',
+                'Failed to update guardian data',
                 $e->getMessage()
             );
         }
@@ -123,8 +141,8 @@ class GuardianController extends Controller
                 Guardian::findOrFail($id)->delete();
 
                 return ResponseFormatter::success(
-                    'The data has been deleted',
-                    'Successfully delete data'
+                    'The data has been deleted successfully deleted',
+                    'Successful delete data'
                 );
             }
         } catch (Exception $e) {
