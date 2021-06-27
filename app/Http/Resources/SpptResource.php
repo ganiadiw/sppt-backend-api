@@ -41,6 +41,14 @@ class SpptResource extends JsonResource
                     'village' => $this->owner->village,
                     'road' => $this->owner->road,
                 ],
+                'family' => [
+                    'id' => $this->owner->family->id,
+                    'name' => $this->owner->family->name,
+                    'rt' => $this->owner->family->rt,
+                    'rw' => $this->owner->family->rw,
+                    'village' => $this->owner->family->village,
+                    'road' => $this->owner->family->road,
+                ]
             ]
         ];
     }
