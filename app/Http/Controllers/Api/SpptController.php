@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SpptController extends Controller
 {
-    public function ownerSearch($nop)
+    public function show($nop)
     {
         try {
             $land = Land::where('nop', $nop)->first();
