@@ -221,7 +221,7 @@ class SpptController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'nop' => 'required',
+                'nop' => 'required|unique:lands,nop',
                 'nop_target' => 'required',
                 'taxpayer_name' => 'required',
                 'taxpayer_rt'  => 'required',

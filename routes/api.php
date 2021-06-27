@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
         Route::post('/', [FamilyController::class, 'store']);
         Route::patch('/{id}', [FamilyController::class, 'update']);
         Route::get('/{id}', [FamilyController::class, 'show']);
+        Route::get('/name/{name}', [FamilyController::class, 'showByName']);
     });
 
     Route::group(['prefix' => 'sppt'], function () {
