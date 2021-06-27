@@ -58,6 +58,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:Super Admin'], 'prefix' => 
     Route::group(['prefix' => 'guardian'], function () {
         Route::post('/', [GuardianController::class, 'createGuardian']); // OK
         Route::put('/{id}', [GuardianController::class, 'updateGuardian']); // OK
+        Route::get('/{id}', [GuardianController::class, 'show']); // OK
         Route::delete('/{id}', [GuardianController::class, 'destroy']); // OK
     });
 

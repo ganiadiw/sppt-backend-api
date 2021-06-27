@@ -24,9 +24,9 @@ class AdministratorController extends Controller
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Failed to load user data',
                 $e->getMessage(),
-                404
+                400
             );
         }
     }
@@ -49,16 +49,6 @@ class AdministratorController extends Controller
                 );
             }
 
-            $user = User::where('username', $request->username)->where('email', $request->email)->first();
-
-            if($user) {
-                return ResponseFormatter::error(
-                    null,
-                    'Username or email already exist',
-                    406
-                );
-            }
-
             $user = User::create([
                 'name' => $request->name,
                 'username' => $request->username,
@@ -72,14 +62,15 @@ class AdministratorController extends Controller
 
             return ResponseFormatter::success(
                 $user,
-                'User created successfully'
+                'User data was successfully created'
             );
 
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Something wrong!',
+                'Failed to create user data',
                 $e->getMessage(),
+                400
             );
         }
     }
@@ -90,12 +81,12 @@ class AdministratorController extends Controller
             User::findOrFail($id)->delete();
 
             return ResponseFormatter::success(
-                'The data has been deleted',
-                'Successfully delete data'
+                null,
+                'Suceessful delete user data'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Something wrong',
+                'Failed to delete user data',
                 $e->getMessage()
             );
         }

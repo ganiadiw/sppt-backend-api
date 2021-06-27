@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -21,18 +22,12 @@ class ProfileController extends Controller
             if (Auth::check()) {
                 return ResponseFormatter::success(
                     new UserResource(Auth::user()),
-                    'User profile has been loaded'
+                    'User profile sucessfully loaded'
                 );
             }
-
-            return ResponseFormatter::error(
-                'Unauthorized',
-                401
-            );
-
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Data not found',
+                'Failed to load profile data',
                 $e->getMessage(),
                 404
             );
@@ -60,14 +55,6 @@ class ProfileController extends Controller
                 );
             }
 
-            if (!Auth::check())
-            {
-                return ResponseFormatter::error(
-                    'Unauthorized',
-                    401
-                );
-            }
-
             $payload = User::where('id', Auth::user()->id)->first();    
             
             if ($request->image) {
@@ -83,7 +70,7 @@ class ProfileController extends Controller
             }
 
             //Check request password is null
-            if ($request->new_password == null){
+            if ($request->new_password == null || $request->new_password == ''){
                 $existingDatas = User::all()->except(Auth::id());
 
                 foreach ($existingDatas as $existingData) {
@@ -175,13 +162,13 @@ class ProfileController extends Controller
 
                 return ResponseFormatter::success(
                     new UserResource($user),
-                    'Successfully update data'
+                    'Profile data successfully updated'
                 );
             }
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Data not found',
+                'Failed to update profile data',
                 $e->getMessage(),
                 404
             );
