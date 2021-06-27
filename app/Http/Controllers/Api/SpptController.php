@@ -33,7 +33,7 @@ class SpptController extends Controller
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Failed to load SPPT families data',
                 $e->getMessage(),
                 400
             );
@@ -47,11 +47,11 @@ class SpptController extends Controller
 
             return ResponseFormatter::success(
                 new SpptResource($sppt),
-                'Data successfully loaded'
+                'SPPT data successfully loaded'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Failed to load SPPT data',
                 $e->getMessage(),
                 400
             );
@@ -119,12 +119,12 @@ class SpptController extends Controller
 
             return ResponseFormatter::success(
                 new SpptResource($sppt),
-                'Data successfully updated'
+                'Successfully created SPPT data'
             );
         } catch (Exception $e) {
             DB::rollBack();
             return ResponseFormatter::error(
-                'Can\'t create new SPPT data',
+                'Failed to create SPPT data',
                 $e->getMessage(),
                 400
             );
@@ -205,12 +205,12 @@ class SpptController extends Controller
 
             return ResponseFormatter::success(
                 new SpptResource($sppt),
-                'Data successfully updated'
+                'SPPT data successfully loaded'
             );
         } catch (Exception $e) {
             DB::rollBack();
             return ResponseFormatter::error(
-                'Can\'t update SPPT data',
+                'Failed to update SPPT data',
                 $e->getMessage(),
                 400
             );
@@ -250,17 +250,21 @@ class SpptController extends Controller
             
             $remainingArea = $land->land_area - $request->land_area;
             $remainingBuildingArea = $land->building_area - $request->building_area;
-    
-            $existingDatas = Land::all()->except($land->nop);
-    
-            foreach ($existingDatas as $existingData) {
-                if ($request->nop == $existingData->nop){
-                    return ResponseFormatter::error(
-                        null,
-                        'NOP already exist',
-                        409
-                    );
-                }  
+
+            if ($remainingArea < 0) {
+                return ResponseFormatter::error(
+                    null,
+                    'The area of ​​the target land is zero, so it cannot reduce the area of ​​the land, make sure the mutation value does not exceed the value of the target land area',
+                    400
+                );
+            }
+
+            if ($remainingBuildingArea < 0) {
+                return ResponseFormatter::error(
+                    null,
+                    'The area of ​​the target building is zero, so it cannot reduce the area of ​​the building, make sure the mutation value does not exceed the value of the target building area',
+                    400
+                );
             }
 
             DB::beginTransaction();
@@ -344,12 +348,12 @@ class SpptController extends Controller
                     new OriginMutationResource($originLand),
                     new NewMutationResource($newLand),
                 ],
-                'Data successfully updated'
+                'Mutation data was successfully created'
             );
         } catch (Exception $e) {
             DB::rollBack();
             return ResponseFormatter::error(
-                'Can\'t create mutation SPPT data',
+                'Failed to create mutation data',
                 $e->getMessage()
             );
         }   
@@ -362,11 +366,11 @@ class SpptController extends Controller
 
             return ResponseFormatter::success(
                 SpptResource::collection($sppt),
-                'Data successfully loaded'
+                'SPPT data successfully loaded'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Load data failed',
+                'Failed to load SPPT data',
                 $e->getMessage(),
                 400
             );
@@ -411,12 +415,12 @@ class SpptController extends Controller
             }
 
             return ResponseFormatter::success(
-                'Data successfully updated',
-                'Data successfully updated'
+                'SPPT data successfully updated',
+                'SPPT data successfully updated'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Can\'t update SPPT data',
+                'Failed to update SPPT data',
                 $e->getMessage(),
                 400
             );
@@ -429,11 +433,11 @@ class SpptController extends Controller
             Owner::findOrFail($id)->delete();
             return ResponseFormatter::success(
                 'The data has been deleted',
-                'Successfully delete data'
+                'SPPT data successfully deleted'
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Something wrong',
+                'Failed to delete SPPT data',
                 $e->getMessage()
             );
         }

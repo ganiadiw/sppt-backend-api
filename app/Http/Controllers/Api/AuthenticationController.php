@@ -46,18 +46,18 @@ class AuthenticationController extends Controller
                     'access_token' => $token,
                     'token_type' => 'Bearer Token',
                     'user' => $user
-                ], 'Authenticated Successfully');
+                ], 'Authentication successful');
             }
 
             return ResponseFormatter::success([
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'user' => $user
-            ], 'Authenticated Successfully');
+            ], 'Authentication successful');
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Something wrong',
+                'Authenticaion failed',
                 $e->getMessage()
             );
         }
@@ -67,6 +67,6 @@ class AuthenticationController extends Controller
     {
         $user = $request->user();
         $user->currentAccessToken()->delete();
-        return ResponseFormatter::success('Token Revoked, Successfully Loged Out');
+        return ResponseFormatter::success('Token revoked, successful loged out');
     }
 }
