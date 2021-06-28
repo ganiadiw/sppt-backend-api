@@ -174,7 +174,7 @@ class SpptController extends Controller
                 }  
             }
 
-            Land::where('nop', $nop)->update([
+            Land::where('nop', $land->nop)->update([
                 'nop' => $request->nop,
                 'owner_id' => $land->owner_id,
                 'guardian_id' => $request->guardian_id,
