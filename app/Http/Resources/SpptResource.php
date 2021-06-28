@@ -17,7 +17,7 @@ class SpptResource extends JsonResource
         return [
             'id' => $this->id,
             'tax_object' => [
-                'nop' => $this->nop,
+                'nop' => (string)$this->nop,
                 'guardian_id' => $this->guardian_id,
                 'address' => [
                     'rt' => $this->rt,
