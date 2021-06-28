@@ -18,6 +18,7 @@ class OriginMutationResource extends JsonResource
             'origin_data' => [
                 'id' => $this->id,
                 'tax_object' => [
+                    'nop' => $this->nop,
                     'guardian_id' => $this->guardian_id,
                     'address' => [
                         'rt' => $this->rt,
