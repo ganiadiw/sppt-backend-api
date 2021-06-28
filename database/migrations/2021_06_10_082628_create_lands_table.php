@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateLandsTable extends Migration
@@ -23,12 +24,12 @@ class CreateLandsTable extends Migration
             $table->string('road', 100)->nullable();
             $table->string('determination')->nullable();
             $table->string('sppt_persil_number', 50)->nullable();
-            $table->string('block_number', 10)->nullable();
-            $table->double('land_area');
+            $table->string('block_number', 10);
             $table->string('land_area_unit', 5);
-            $table->double('building_area')->nullable();
+            $table->double('building_area');
             $table->string('building_area_unit', 5);
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
     }
 
