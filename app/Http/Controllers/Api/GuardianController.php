@@ -26,7 +26,7 @@ class GuardianController extends Controller
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load guardians data',
+                'Data not found',
                 $e->getMessage(),
                 404
             );
@@ -44,7 +44,7 @@ class GuardianController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load guardian data',
+                'Data not found',
                 $e->getMessage(),
                 404
             );
@@ -147,8 +147,9 @@ class GuardianController extends Controller
             }
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Something wrong',
-                $e->getMessage()
+                'Data not found',
+                $e->getMessage(),
+                404
             );
         }
     }

@@ -24,9 +24,9 @@ class AdministratorController extends Controller
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load user data',
+                'Data not found',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -58,7 +58,7 @@ class AdministratorController extends Controller
                 'role' => 'admin'
             ]);
 
-            $user->assignrole('admin');
+            $user->assignRole('admin');
 
             return ResponseFormatter::success(
                 $user,

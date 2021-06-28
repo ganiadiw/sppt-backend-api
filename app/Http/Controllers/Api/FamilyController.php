@@ -23,7 +23,7 @@ class FamilyController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Families data failed to load',
+                'Data not found',
                 $e->getMessage(),
                 404
             );
@@ -119,8 +119,9 @@ class FamilyController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load family data',
-                $e->getMessage()
+                'Data not found',
+                $e->getMessage(),
+                404
             );
         }
     }
@@ -136,8 +137,9 @@ class FamilyController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load families data',
-                $e->getMessage()
+                'Data not found',
+                $e->getMessage().
+                404
             );
         }
     }

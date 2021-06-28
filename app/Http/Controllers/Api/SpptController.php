@@ -23,9 +23,11 @@ class SpptController extends Controller
     {
         try {
             $land = Land::where('nop', $nop)->first();
+            
             $owner = Owner::where('id', $land->owner_id)->first();
             $owners = Owner::with('land')->where('family_id', $owner->family_id)->get();
 
+            
             return ResponseFormatter::success(
                 OwnerSearchResource::collection($owners),
                 'SPPT families data successfully loaded'
@@ -33,9 +35,9 @@ class SpptController extends Controller
 
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load SPPT families data',
+                'Data not found',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -51,9 +53,9 @@ class SpptController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load SPPT data',
+                'Data not found',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -240,10 +242,18 @@ class SpptController extends Controller
                 );
             }
     
-            $land = Land::where('nop', $request->nop_target)->first();
+            $landTarget = Land::where('nop', $request->nop_target)->first();
+            if (!$landTarget) {
+                return ResponseFormatter::error(
+                    null,
+                    'SPPT target data not found',
+                    404
+                );
+            }
             
-            $remainingArea = $land->land_area - $request->land_area;
-            $remainingBuildingArea = $land->building_area - $request->building_area;
+            $remainingArea = $landTarget->land_area - $request->land_area;
+            $remainingBuildingArea = $landTarget->building_area - $request->building_area;
+            $originLand = Land::where('nop', $request->nop_target)->first();
 
             if ($remainingArea < 0) {
                 return ResponseFormatter::error(
@@ -253,15 +263,8 @@ class SpptController extends Controller
                 );
             }
 
-            if ($remainingBuildingArea < 0) {
-                return ResponseFormatter::error(
-                    null,
-                    'The area of ​​the target building is zero, so it cannot reduce the area of ​​the building, make sure the mutation value does not exceed the value of the target building area',
-                    400
-                );
-            }
-
             DB::beginTransaction();
+
             $owner = Owner::create([
                 'family_id' => $request->family_id,
                 'name' => $request->taxpayer_name,
@@ -270,6 +273,52 @@ class SpptController extends Controller
                 'village' => $request->taxpayer_village,
                 'road' => $request->taxpayer_road,
             ]);
+
+            if ($landTarget->building_area != 0) {
+                if ($remainingBuildingArea < 0) {
+                    DB::rollBack();
+                    return ResponseFormatter::error(
+                        null,
+                        'The area of ​​the target building is zero, so it cannot reduce the area of ​​the building, make sure the mutation value does not exceed the value of the target building area',
+                        400
+                    );
+                }
+
+                $originLand = Land::where('nop', $request->nop_target)->first();
+                Land::where('nop', $request->nop_target)->update([
+                    'nop' => $originLand->nop,
+                    'owner_id' => $originLand->owner_id,
+                    'guardian_id' => $originLand->guardian_id,
+                    'rt' => $originLand->rt,
+                    'rw' => $originLand->rw,
+                    'village' => $originLand->village,
+                    'road' => $originLand->road,
+                    'determination' => $originLand->determination,
+                    'sppt_persil_number' => $originLand->sppt_persil_number,
+                    'block_number' => $originLand->block_number,
+                    'land_area' => $remainingArea,
+                    'land_area_unit' => $originLand->land_area_unit,
+                    'building_area' => $remainingBuildingArea,
+                    'building_area_unit' => $originLand->building_area_unit,
+                ]);
+            } else {
+                Land::where('nop', $request->nop_target)->update([
+                    'nop' => $originLand->nop,
+                    'owner_id' => $originLand->owner_id,
+                    'guardian_id' => $originLand->guardian_id,
+                    'rt' => $originLand->rt,
+                    'rw' => $originLand->rw,
+                    'village' => $originLand->village,
+                    'road' => $originLand->road,
+                    'determination' => $originLand->determination,
+                    'sppt_persil_number' => $originLand->sppt_persil_number,
+                    'block_number' => $originLand->block_number,
+                    'land_area' => $remainingArea,
+                    'land_area_unit' => $originLand->land_area_unit,
+                    'building_area' => $originLand->building_area,
+                    'building_area_unit' => $originLand->building_area_unit,
+                ]);
+            }
                 
             $newLand = Land::create([
                 'nop' => $request->nop,
@@ -286,24 +335,6 @@ class SpptController extends Controller
                 'land_area_unit' => $request->land_area_unit,
                 'building_area' => $request->building_area,
                 'building_area_unit' => $request->building_area_unit,
-            ]);
-    
-            $originLand = Land::where('nop', $request->nop_target)->first();
-            Land::where('nop', $request->nop_target)->update([
-                'nop' => $originLand->nop,
-                'owner_id' => $originLand->owner_id,
-                'guardian_id' => $originLand->guardian_id,
-                'rt' => $originLand->rt,
-                'rw' => $originLand->rw,
-                'village' => $originLand->village,
-                'road' => $originLand->road,
-                'determination' => $originLand->determination,
-                'sppt_persil_number' => $originLand->sppt_persil_number,
-                'block_number' => $originLand->block_number,
-                'land_area' => $remainingArea,
-                'land_area_unit' => $originLand->land_area_unit,
-                'building_area' => $remainingBuildingArea,
-                'building_area_unit' => $originLand->building_area_unit,
             ]);
     
             $newOwner = Owner::where('id', $owner->id)->first();
@@ -364,9 +395,9 @@ class SpptController extends Controller
             );
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load SPPT data',
+                'Data not found',
                 $e->getMessage(),
-                400
+                404
             );
         }
     }
@@ -432,7 +463,8 @@ class SpptController extends Controller
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Failed to delete SPPT data',
-                $e->getMessage()
+                $e->getMessage(),
+                404
             );
         }
     }

@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
@@ -27,7 +26,7 @@ class ProfileController extends Controller
             }
         } catch (Exception $e) {
             return ResponseFormatter::error(
-                'Failed to load profile data',
+                'Data not found',
                 $e->getMessage(),
                 404
             );
