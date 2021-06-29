@@ -3,15 +3,11 @@
 namespace Database\Seeders;
 
 use Flynsarmy\CsvSeeder\CsvSeeder;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class LandSeeder extends CsvSeeder
+class LandSeeder extends Seeder
 {
-    public function __construct()
-    {
-        $this->table = 'lands';
-        $this->filename = database_path().'/seeders/csvs/land.csv';
-    }
     /**
      * Run the database seeds.
      *
@@ -19,10 +15,7 @@ class LandSeeder extends CsvSeeder
      */
     public function run()
     {
-        DB::disableQueryLog();
-
-        DB::table($this->table);
-
-        parent::run();
+        $sql = file_get_contents(database_path() . '/seeders/sql/lands.sql');
+        DB::unprepared($sql);
     }
 }
