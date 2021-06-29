@@ -106,7 +106,8 @@ class ProfileController extends Controller
                 $user = User::where('id', Auth::user()->id)->first();
 
                 return ResponseFormatter::success(
-                    new UserResource($user)
+                    new UserResource($user),
+                    'Profile data successfully updated'
                 );
             }
 
@@ -115,12 +116,10 @@ class ProfileController extends Controller
                 $payload = User::where('id', Auth::user()->id)->first();
 
                 if ($request->confirmation_password != $request->new_password) {
-                    throw new Exception (
-                        ResponseFormatter::error(
-                            null,
-                            'The new and confirmation passwords don\'t match',
-                            406
-                        )
+                    return ResponseFormatter::error(
+                        null,
+                        'The new and confirmation passwords don\'t match',
+                        406
                     );
                 }
 

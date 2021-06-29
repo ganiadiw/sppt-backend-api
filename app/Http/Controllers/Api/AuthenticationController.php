@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -45,14 +46,14 @@ class AuthenticationController extends Controller
                 return ResponseFormatter::success([
                     'access_token' => $token,
                     'token_type' => 'Bearer Token',
-                    'user' => $user
+                    'user' => new UserResource($user)
                 ], 'Authentication successful');
             }
 
             return ResponseFormatter::success([
                 'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
+                'token_type' => 'Bearer Token',
+                'user' => new UserResource($user)
             ], 'Authentication successful');
 
         } catch (Exception $e) {
