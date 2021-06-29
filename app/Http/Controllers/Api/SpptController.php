@@ -42,41 +42,27 @@ class SpptController extends Controller
         }
     }
 
-    public function showSppt($nop)
-    {
-        try {
-            $sppt = Land::where('nop', $nop)->first();
-
-            return ResponseFormatter::success(
-                new SpptResource($sppt),
-                'SPPT data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
-    }
-
     public function createSppt(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
                 'nop' => 'required|unique:lands,nop',
-                'taxpayer_name' => 'required',
-                'taxpayer_rt'  => 'required',
-                'taxpayer_rw' => 'required',
-                'taxpayer_village' => 'required',
+                'taxpayer_name' => 'required|max:100',
+                'taxpayer_rt'  => 'required|max:10',
+                'taxpayer_rw' => 'required|max:10',
+                'taxpayer_village' => 'required|max:100',
+                'taxpayer_road' => 'max:100',
                 'guardian_id' => 'required',
-                'tax_object_rt' => 'required',
-                'tax_object_rw' => 'required',
-                'tax_object_village' => 'required',
+                'tax_object_rt' => 'required|max:10',
+                'tax_object_rw' => 'required|max:10',
+                'tax_object_village' => 'required|max:100',
+                'tax_objcet_road' => 'max:100',
+                'sppt_persil_number' => 'max:50',
+                'block_number' => 'required|max:20',
                 'land_area' => 'required',
-                'land_area_unit' => 'required',
+                'land_area_unit' => 'required|max:10',
                 'building_area' => 'required',
-                'building_area_unit' => 'required',
+                'building_area_unit' => 'required|max:10',
             ]);
 
             if ($validator->fails()) {
@@ -136,19 +122,22 @@ class SpptController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'nop' => 'required',
+                'taxpayer_name' => 'required|max:100',
+                'taxpayer_rt'  => 'required|max:10',
+                'taxpayer_rw' => 'required|max:10',
+                'taxpayer_village' => 'required|max:100',
+                'taxpayer_road' => 'max:100',
                 'guardian_id' => 'required',
-                'tax_object_rt' => 'required',
-                'tax_object_rw' => 'required',
-                'tax_object_village' => 'required',
+                'tax_object_rt' => 'required|max:10',
+                'tax_object_rw' => 'required|max:10',
+                'tax_object_village' => 'required|max:100',
+                'tax_objcet_road' => 'max:100',
+                'sppt_persil_number' => 'max:50',
+                'block_number' => 'required|max:20',
                 'land_area' => 'required',
-                'land_area_unit' => 'required',
+                'land_area_unit' => 'required|max:10',
                 'building_area' => 'required',
-                'building_area_unit' => 'required',
-                'taxpayer_name' => 'required',
-                'taxpayer_rt' => 'required',
-                'taxpayer_rw' => 'required',
-                'taxpayer_village' => 'required',
-                'family_id' => 'required',
+                'building_area_unit' => 'required|max:10',
             ]);
 
             if ($validator->fails()) {
@@ -221,18 +210,22 @@ class SpptController extends Controller
             $validator = Validator::make($request->all(), [
                 'nop' => 'required|unique:lands,nop',
                 'nop_target' => 'required',
-                'taxpayer_name' => 'required',
-                'taxpayer_rt'  => 'required',
-                'taxpayer_rw' => 'required',
-                'taxpayer_village' => 'required',
+                'taxpayer_name' => 'required|max:100',
+                'taxpayer_rt'  => 'required|max:10',
+                'taxpayer_rw' => 'required|max:10',
+                'taxpayer_village' => 'required|max:100',
+                'taxpayer_road' => 'max:100',
                 'guardian_id' => 'required',
-                'tax_object_rt' => 'required',
-                'tax_object_rw' => 'required',
-                'tax_object_village' => 'required',
+                'tax_object_rt' => 'required|max:10',
+                'tax_object_rw' => 'required|max:10',
+                'tax_object_village' => 'required|max:100',
+                'tax_objcet_road' => 'max:100',
+                'sppt_persil_number' => 'max:50',
+                'block_number' => 'required|max:20',
                 'land_area' => 'required',
-                'land_area_unit' => 'required',
+                'land_area_unit' => 'required|max:10',
                 'building_area' => 'required',
-                'building_area_unit' => 'required',
+                'building_area_unit' => 'required|max:10',
             ]);
 
             if ($validator->fails()) {

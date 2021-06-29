@@ -56,7 +56,7 @@ class GuardianController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required|unique:guardians,id',
-                'name' => 'required',
+                'name' => 'required|max:100',
             ]);
 
             if ($validator->fails()) {
@@ -92,7 +92,7 @@ class GuardianController extends Controller
                     'required',
                     Rule::unique('guardians')->ignore($id),
                 ],
-                'name' => 'required',
+                'name' => 'required|max:100',
             ]);
 
             if ($validator->fails()) {

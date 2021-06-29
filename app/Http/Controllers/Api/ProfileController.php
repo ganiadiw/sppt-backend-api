@@ -39,7 +39,7 @@ class ProfileController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'occupation' => 'required',
-                'username' => 'required',
+                'username' => 'required|max:100',
                 'email' => 'required',
                 'image' => 'image|mimes:png,jpg,jpeg',
                 '_method' => 'required',
@@ -52,20 +52,6 @@ class ProfileController extends Controller
                     $validator->errors(),
                     'The given data was invalid'
                 );
-            }
-
-            $payload = User::where('id', Auth::user()->id)->first();    
-            
-            if ($request->image) {
-                $image = $request->file('image');
-                $imagePath = $image->store('images/profile');
-                $imageName = $image->getClientOriginalName(); 
-                Storage::delete($payload->image_path);
-            }
-
-            if ($request->image == null) {
-                $imagePath = null;
-                $imageName = null;
             }
 
             //Check request password is null
@@ -92,7 +78,19 @@ class ProfileController extends Controller
                     }  
                 }        
 
-                $payload = User::where('id', Auth::user()->id)->first();
+                $payload = User::where('id', Auth::user()->id)->first();    
+            
+                if ($request->image) {
+                    $image = $request->file('image');
+                    $imagePath = $image->store('images/profile');
+                    $imageName = $image->getClientOriginalName(); 
+                    Storage::delete($payload->image_path);
+                }
+
+                if ($request->image == null) {
+                    $imagePath = null;
+                    $imageName = null;
+                }
                 
                 $user = User::where('id', Auth::user()->id)->update([
                     'name' => $request->name,
@@ -120,7 +118,7 @@ class ProfileController extends Controller
                     throw new Exception (
                         ResponseFormatter::error(
                             null,
-                            'Wrong old password',
+                            'The new and old passwords don\'t match',
                             406
                         )
                     );
@@ -146,6 +144,18 @@ class ProfileController extends Controller
                         );
                     }  
                 } 
+
+                if ($request->image) {
+                    $image = $request->file('image');
+                    $imagePath = $image->store('images/profile');
+                    $imageName = $image->getClientOriginalName(); 
+                    Storage::delete($payload->image_path);
+                }
+
+                if ($request->image == null) {
+                    $imagePath = null;
+                    $imageName = null;
+                }
                 
                 $user = User::where('id', Auth::user()->id)->update([
                     'name' => $request->name,

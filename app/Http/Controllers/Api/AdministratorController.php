@@ -36,7 +36,7 @@ class AdministratorController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'username' => 'required|unique:users,username',
+                'username' => 'required|unique:users,username|max:100',
                 'email' => 'required|unique:users,email',
                 'occupation' => 'required',
                 'password' => 'required|min:8'

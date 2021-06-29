@@ -38,17 +38,16 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
     Route::group(['prefix' => 'sppt'], function () {
         Route::post('/', [SpptController::class, 'createSppt']);
         Route::get('/search/{nop}', [SpptController::class, 'show']);
-        Route::get('/{nop}', [SpptController::class, 'showSppt']);
         Route::patch('/update/{nop}', [SpptController::class, 'spptUpdate']);
         Route::post('/mutation', [SpptController::class, 'mutation']);
-        Route::delete('/delete/{id}', [SpptController::class, 'destroy']); // OK
-        Route::get('guardian/{guardian_id}', [SpptController::class, 'showSpptByGuardian']); // OK
+        Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
+        Route::get('guardian/{guardian_id}', [SpptController::class, 'showSpptByGuardian']);
     });
 
-    Route::get('/guardians', [GuardianController::class, 'index']); // OK
+    Route::get('/guardians', [GuardianController::class, 'index']);
 });
 
-Route::group(['middleware' => ['auth:sanctum', 'role:Super Admin'], 'prefix' => 'v1'], function () {
+Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 'v1'], function () {
     Route::get('/administrators', [AdministratorController::class, 'index']);
     Route::group(['prefix' => 'administrator'], function () {
         Route::post('/', [AdministratorController::class, 'store']);
@@ -56,11 +55,11 @@ Route::group(['middleware' => ['auth:sanctum', 'role:Super Admin'], 'prefix' => 
     });
 
     Route::group(['prefix' => 'guardian'], function () {
-        Route::post('/', [GuardianController::class, 'createGuardian']); // OK
-        Route::put('/{id}', [GuardianController::class, 'updateGuardian']); // OK
-        Route::get('/{id}', [GuardianController::class, 'show']); // OK
-        Route::delete('/{id}', [GuardianController::class, 'destroy']); // OK
+        Route::post('/', [GuardianController::class, 'createGuardian']);
+        Route::put('/{id}', [GuardianController::class, 'updateGuardian']);
+        Route::get('/{id}', [GuardianController::class, 'show']);
+        Route::delete('/{id}', [GuardianController::class, 'destroy']);
     });
 
-    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateSpptGuardianId']); // OK
+    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateSpptGuardianId']);
 });

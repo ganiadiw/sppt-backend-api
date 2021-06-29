@@ -34,10 +34,11 @@ class FamilyController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'rt' => 'required',
-                'rw' => 'required',
-                'village' => 'required'
+                'name' => 'required|max:100',
+                'rt' => 'required|max:10',
+                'rw' => 'required|max:10',
+                'village' => 'required|max:100',
+                'road' => 'max:100'
             ]);
 
             if ($validator->fails()) {
@@ -71,11 +72,11 @@ class FamilyController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id' => 'required',
-                'name' => 'required',
-                'rt' => 'required',
-                'rw' => 'required',
-                'village' => 'required'
+                'name' => 'required|max:100',
+                'rt' => 'required|max:10',
+                'rw' => 'required|max:10',
+                'village' => 'required|max:100',
+                'road' => 'max:100'
                 
             ]);
 

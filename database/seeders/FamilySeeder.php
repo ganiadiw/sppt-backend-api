@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Family;
-use Illuminate\Database\Seeder;
 use Flynsarmy\CsvSeeder\CsvSeeder;
 use Illuminate\Support\Facades\DB;
 
@@ -26,25 +24,5 @@ class FamilySeeder extends CsvSeeder
         DB::table($this->table);
 
         parent::run();
-
-        // Family::create([
-        //     'name' => 'Akbaruddin Nurullah',
-        // ]);
-        // Family::create([
-        //     'name' => 'Sobari',
-        // ]);
-        // Family::create([
-        //     'name' => 'Gani Adi Wiranata',
-        // ]);
-        // Family::create([
-        //     'name' => 'Jadid',
-        // ]);
-        // Family::create([
-        //     'name' => 'Badris Sholeh Rahmatullah',
-        // ]);
-        // Family::create([
-        //     'name' => 'Muhammad Iqbal Naufal Ilmi',
-        // ]);
-        
     }
 }

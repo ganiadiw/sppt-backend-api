@@ -24,11 +24,11 @@ class CreateLandsTable extends Migration
             $table->string('road', 100)->nullable();
             $table->string('determination')->nullable();
             $table->string('sppt_persil_number', 50)->nullable();
-            $table->string('block_number', 10);
+            $table->string('block_number', 20);
             $table->double('land_area');
-            $table->string('land_area_unit', 5);
+            $table->string('land_area_unit', 10);
             $table->double('building_area');
-            $table->string('building_area_unit', 5);
+            $table->string('building_area_unit', 10);
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
