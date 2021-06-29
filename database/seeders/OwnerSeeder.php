@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Owner;
-use Illuminate\Database\Seeder;
-use Faker\Factory as Faker;
 use Flynsarmy\CsvSeeder\CsvSeeder;
 use Illuminate\Support\Facades\DB;
 
