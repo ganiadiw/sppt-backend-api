@@ -43,7 +43,7 @@ class ProfileController extends Controller
                 'email' => 'required',
                 'image' => 'image|mimes:png,jpg,jpeg',
                 '_method' => 'required',
-                'old_password' => 'min:8',
+                'confirmation_password' => 'min:8',
                 'new_password' => 'min:8'
             ]);
 
@@ -114,11 +114,11 @@ class ProfileController extends Controller
                 $existingDatas = User::all()->except(Auth::id());
                 $payload = User::where('id', Auth::user()->id)->first();
 
-                if (!Hash::check($request->old_password, $payload->password)) {
+                if ($request->confirmation_password != $request->new_password) {
                     throw new Exception (
                         ResponseFormatter::error(
                             null,
-                            'The new and old passwords don\'t match',
+                            'The new and confirmation passwords don\'t match',
                             406
                         )
                     );
