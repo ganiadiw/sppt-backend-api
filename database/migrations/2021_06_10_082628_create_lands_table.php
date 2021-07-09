@@ -17,7 +17,7 @@ class CreateLandsTable extends Migration
         Schema::create('lands', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('nop')->unique();
-            $table->foreignId('owner_id')->constrained();
+            $table->foreignId('owner_id')->constrained()->onDelete('cascade');
             $table->string('rt', 10);
             $table->string('rw', 10);
             $table->string('village', 100);

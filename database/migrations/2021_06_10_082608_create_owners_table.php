@@ -16,7 +16,7 @@ class CreateOwnersTable extends Migration
     {
         Schema::create('owners', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('family_id')->constrained();
+            $table->foreignId('family_id')->nullable()->constrained();
             $table->string('name', 100);
             $table->string('rt', 10);
             $table->string('rw', 10);
