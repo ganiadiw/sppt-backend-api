@@ -21,17 +21,18 @@ use Illuminate\Support\Facades\Route;
 Route::post('/v1/login', [AuthenticationController::class, 'login']);
 Route::get('/v1/families', [FamilyController::class, 'index']);
 Route::get('/v1/guardians', [GuardianController::class, 'index']);
-Route::get('/v1/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'family'], function () {
         Route::get('/{id}', [FamilyController::class, 'show']);
         Route::get('/name/{name}', [FamilyController::class, 'showByName']);
     });
-
+    
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
+        Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
         Route::get('/{nop}', [SpptController::class, 'show']);
+        Route::get('/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
     });
 });
 
@@ -44,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin'], 'prefi
     Route::group(['prefix' => 'family'], function () {
         Route::post('/', [FamilyController::class, 'store']);
         Route::patch('/{id}', [FamilyController::class, 'update']);
+        Route::delete('/{id}', [FamilyController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'sppt'], function () {
@@ -70,4 +72,5 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 
     });
 
     Route::patch('/sppt/guardian-update', [SpptController::class, 'updateGuardianId']);
+    Route::patch('/sppt/family-update', [SpptController::class], 'updateFamilyId');
 });
