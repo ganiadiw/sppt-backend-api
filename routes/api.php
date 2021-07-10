@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\AdministratorController;
 use App\Http\Controllers\Api\AuthenticationController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\GuardianController;
-use App\Http\Controllers\Api\OwnerController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SpptController;
 use Illuminate\Support\Facades\Route;
@@ -20,31 +19,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/v1/login', [AuthenticationController::class, 'login']);
+Route::get('/v1/families', [FamilyController::class, 'index']);
+Route::get('/v1/guardians', [GuardianController::class, 'index']);
+Route::get('/v1/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
 
-Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'v1'], function () {
-    Route::post('/logout', [AuthenticationController::class, 'logout']);
-
-    Route::get('/profile', [ProfileController::class, 'show']);
-    Route::patch('/profile/update', [ProfileController::class, 'update']);
-
-    Route::get('/families', [FamilyController::class, 'index']);
+Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'family'], function () {
-        Route::post('/', [FamilyController::class, 'store']);
-        Route::patch('/{id}', [FamilyController::class, 'update']);
         Route::get('/{id}', [FamilyController::class, 'show']);
         Route::get('/name/{name}', [FamilyController::class, 'showByName']);
     });
 
     Route::group(['prefix' => 'sppt'], function () {
-        Route::post('/', [SpptController::class, 'createSppt']);
-        Route::get('/search/{nop}', [SpptController::class, 'show']);
-        Route::patch('/update/{nop}', [SpptController::class, 'spptUpdate']);
-        Route::post('/mutation', [SpptController::class, 'mutation']);
-        Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
-        Route::get('guardian/{guardian_id}', [SpptController::class, 'showSpptByGuardian']);
+        Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
+        Route::get('/{nop}', [SpptController::class, 'show']);
+    });
+});
+
+Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin'], 'prefix' => 'v1'], function () {
+    Route::post('/logout', [AuthenticationController::class, 'logout']);
+
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::patch('/profile/update', [ProfileController::class, 'update']);
+
+    Route::group(['prefix' => 'family'], function () {
+        Route::post('/', [FamilyController::class, 'store']);
+        Route::patch('/{id}', [FamilyController::class, 'update']);
     });
 
-    Route::get('/guardians', [GuardianController::class, 'index']);
+    Route::group(['prefix' => 'sppt'], function () {
+        Route::post('/', [SpptController::class, 'store']);
+        Route::patch('/update/{nop}', [SpptController::class, 'update']);
+        Route::post('/mutation', [SpptController::class, 'mutation']);
+        Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
+    });
+
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 'v1'], function () {
@@ -61,5 +69,5 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 
         Route::delete('/{id}', [GuardianController::class, 'destroy']);
     });
 
-    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateSpptGuardianId']);
+    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateGuardianId']);
 });

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SpptController extends Controller
 {
-    public function show($nop)
+    public function showByFamily($nop)
     {
         try {
             $land = Land::where('nop', $nop)->first();
@@ -42,7 +42,43 @@ class SpptController extends Controller
         }
     }
 
-    public function createSppt(Request $request)
+    public function show($nop)
+    {
+        try {
+            $sppt = Land::where('nop', $nop)->first();
+
+            return ResponseFormatter::success(
+                new SpptResource($sppt),
+                'SPPT data successfully loaded'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Data not found',
+                $e->getMessage(),
+                404
+            );
+        }
+    }
+
+    public function showByGuardian($guardian_id)
+    {
+        try {
+            $sppt = Land::where('guardian_id', $guardian_id)->get();
+
+            return ResponseFormatter::success(
+                SpptResource::collection($sppt),
+                'SPPT data successfully loaded'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Data not found',
+                $e->getMessage(),
+                404
+            );
+        }
+    }
+
+    public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -117,7 +153,7 @@ class SpptController extends Controller
         }
     }
 
-    public function spptUpdate(Request $request, $nop)
+    public function update(Request $request, $nop)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -247,6 +283,7 @@ class SpptController extends Controller
             $remainingArea = $landTarget->land_area - $request->land_area;
             $remainingBuildingArea = $landTarget->building_area - $request->building_area;
             $originLand = Land::where('nop', $request->nop_target)->first();
+            $originOwner = Owner::find($originLand->owner_id);
 
             if ($remainingArea < 0) {
                 return ResponseFormatter::error(
@@ -277,7 +314,6 @@ class SpptController extends Controller
                     );
                 }
 
-                $originLand = Land::where('nop', $request->nop_target)->first();
                 Land::where('nop', $request->nop_target)->update([
                     'nop' => $originLand->nop,
                     'owner_id' => $originLand->owner_id,
@@ -329,10 +365,14 @@ class SpptController extends Controller
                 'building_area' => $request->building_area,
                 'building_area_unit' => $request->building_area_unit,
             ]);
-    
+            
             $newOwner = Owner::where('id', $owner->id)->first();
             $originOwner = Owner::where('id', $originLand->owner->id)->first();
             $newLand = Land::where('nop', $request->nop)->first();
+
+            if ($remainingArea <= 0) {
+                Owner::where('id', $originOwner->id)->delete();
+            }
 
             MutationHistory::create([
                 'modified_by' => Auth::user()->name,
@@ -377,25 +417,7 @@ class SpptController extends Controller
         }   
     }
 
-    public function showSpptByGuardian($guardian_id)
-    {
-        try {
-            $sppt = Land::where('guardian_id', $guardian_id)->get();
-
-            return ResponseFormatter::success(
-                SpptResource::collection($sppt),
-                'SPPT data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
-    }
-
-    public function updateSpptGuardianId(Request $request)
+    public function updateGuardianId(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
