@@ -26,13 +26,29 @@ class SpptController extends Controller
             
             $owner = Owner::where('id', $land->owner_id)->first();
             $owners = Owner::with('land')->where('family_id', $owner->family_id)->get();
-
             
             return ResponseFormatter::success(
                 OwnerSearchResource::collection($owners),
-                'SPPT families data successfully loaded'
+                'SPPT data successfully loaded'
             );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Data not found',
+                $e->getMessage(),
+                404
+            );
+        }
+    }
 
+    public function showByFamilyId($id)
+    {
+        try {
+            $owners = Owner::with('land')->where('family_id', $id)->get();
+            
+            return ResponseFormatter::success(
+                OwnerSearchResource::collection($owners),
+                'SPPT data successfully loaded'
+            );
         } catch (Exception $e) {
             return ResponseFormatter::error(
                 'Data not found',
@@ -451,6 +467,48 @@ class SpptController extends Controller
                     'land_area_unit' => $land->land_area_unit,
                     'building_area' => $land->building_area,
                     'building_area_unit' => $land->building_area_unit,
+                ]);
+            }
+
+            return ResponseFormatter::success(
+                'SPPT data successfully updated',
+                'SPPT data successfully updated'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Failed to update SPPT data',
+                $e->getMessage(),
+                400
+            );
+        }
+    }
+
+    public function updateFamilyId(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'sppt_objects' => 'required',
+                'sppt_objects.*.id' => 'required',
+                'sppt_objects.*.family_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormatter::error(
+                    $validator->errors(),
+                    'The given data was invalid'
+                );
+            }
+
+            foreach ($request->sppt_objects as $key => $value) {
+                $owner = Owner::where('id', $value['id'])->first();
+
+                Owner::where('id', $owner->id)->update([
+                    'family_id' => $value['family_id'],                        
+                    'name' => $owner->name,
+                    'rt' => $owner->rt,
+                    'rw' => $owner->rw,
+                    'village' => $owner->village,
+                    'road' => $owner->road
                 ]);
             }
 

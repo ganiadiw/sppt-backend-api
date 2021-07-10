@@ -6,6 +6,7 @@ use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
+use App\Models\Owner;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -140,6 +141,40 @@ class FamilyController extends Controller
             return ResponseFormatter::error(
                 'Data not found',
                 $e->getMessage().
+                404
+            );
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $owner = Owner::where('family_id', $id)->get();
+            $ownerCount = $owner->count();
+
+            if ($ownerCount != 0) {
+                $response = [
+                    'family_id' => $id,
+                    'number_of_connected_data' => $ownerCount
+                ];
+                return ResponseFormatter::error(
+                    $response,
+                    'family data is still connected to other data, please update the connected data first',
+                    409
+                );
+            } else {
+                Family::findOrFail($id)->delete();
+
+                return ResponseFormatter::success(
+                    'The data has been deleted successfully deleted',
+                    'Successful delete data'
+                );
+            }
+
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Data not found',
+                $e->getMessage(),
                 404
             );
         }
