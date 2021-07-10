@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreSpptRequest;
 use App\Http\Resources\NewMutationResource;
 use App\Http\Resources\OriginMutationResource;
 use App\Http\Resources\OwnerSearchResource;
@@ -20,24 +19,6 @@ use Illuminate\Support\Facades\Validator;
 
 class SpptController extends Controller
 {
-    public function index()
-    {
-        try {
-            $sppts = Land::orderBy('guardian_id')->get();
-
-            return ResponseFormatter::success(
-                SpptResource::collection($sppts),
-                'SPPT data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
-    }
-
     public function showByFamily($nop)
     {
         try {
