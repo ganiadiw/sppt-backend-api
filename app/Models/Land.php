@@ -41,4 +41,9 @@ class Land extends Model
     {
         return $this->belongsTo(Guardian::class);
     }
+
+    public function taxHistories()
+    {
+        return $this->hasMany(TaxHistory::class);
+    }
 }

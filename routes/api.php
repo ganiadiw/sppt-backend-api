@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\GuardianController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SpptController;
+use App\Http\Controllers\Api\TaxHistoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
         Route::get('/{nop}', [SpptController::class, 'show']);
         Route::get('/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
+        Route::get('/tax-histories/{sppt_id}', [TaxHistoryController::class, 'showTaxHistory']);
+        Route::get('/tax-history/{id}', [TaxHistoryController::class, 'show']);
     });
 });
 
@@ -53,6 +56,9 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin'], 'prefi
         Route::patch('/update/{nop}', [SpptController::class, 'update']);
         Route::post('/mutation', [SpptController::class, 'mutation']);
         Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
+        Route::post('/tax-history', [TaxHistoryController::class, 'store']);
+        Route::patch('/tax-history/{id}', [TaxHistoryController::class, 'update']);
+        Route::delete('/tax-history/{id}', [TaxHistoryController::class, 'destroy']);
     });
 
 });
