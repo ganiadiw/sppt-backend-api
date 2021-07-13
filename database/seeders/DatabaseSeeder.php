@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FamilySeeder::class);
         $this->call(OwnerSeeder::class);
         $this->call(LandSeeder::class);
+        $this->call(TaxHistorySeeder::class);
     }
 
 }

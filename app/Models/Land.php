@@ -17,7 +17,6 @@ class Land extends Model
         'rw',
         'village',
         'road',
-        'determination',
         'sppt_persil_number',
         'block_number',
         'land_area',
@@ -40,5 +39,10 @@ class Land extends Model
     public function guardian()
     {
         return $this->belongsTo(Guardian::class);
+    }
+
+    public function taxHistories()
+    {
+        return $this->hasMany(TaxHistory::class);
     }
 }

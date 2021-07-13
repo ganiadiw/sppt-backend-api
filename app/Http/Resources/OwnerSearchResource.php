@@ -25,7 +25,6 @@ class OwnerSearchResource extends JsonResource
                     'village' => $this->land->village,
                     'road' => $this->land->road,
                 ],
-                'determination' => $this->land->determination,
                 'sppt_persil_number' => $this->land->sppt_persil_number,
                 'block_number' => $this->land->block_number,
                 'land_area' => $this->land->land_area,

@@ -26,7 +26,6 @@ class OriginMutationResource extends JsonResource
                         'village' => $this->village,
                         'road' => $this->road,
                     ],
-                    'determination' => $this->determination,
                     'sppt_persil_number' => $this->sppt_persil_number,
                     'block_number' => $this->block_number,
                     'land_area' => $this->land_area,
