@@ -45,7 +45,6 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin'], 'prefi
     Route::group(['prefix' => 'family'], function () {
         Route::post('/', [FamilyController::class, 'store']);
         Route::patch('/{id}', [FamilyController::class, 'update']);
-        Route::delete('/{id}', [FamilyController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'sppt'], function () {
@@ -72,5 +71,6 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 
     });
 
     Route::patch('/sppt/guardian-update', [SpptController::class, 'updateGuardianId']);
-    Route::patch('/sppt/family-update', [SpptController::class], 'updateFamilyId');
+    Route::patch('/sppt/family-update', [SpptController::class, 'updateFamilyId']);
+    Route::delete('family/{id}', [FamilyController::class, 'destroy']);
 });
