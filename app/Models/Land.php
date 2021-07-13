@@ -17,7 +17,6 @@ class Land extends Model
         'rw',
         'village',
         'road',
-        'determination',
         'sppt_persil_number',
         'block_number',
         'land_area',

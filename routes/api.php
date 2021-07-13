@@ -29,6 +29,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/name/{name}', [FamilyController::class, 'showByName']);
     });
     
+    Route::get('sppts/', [SpptController::class, 'index']);
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
         Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);

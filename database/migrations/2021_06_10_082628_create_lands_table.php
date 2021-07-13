@@ -22,7 +22,6 @@ class CreateLandsTable extends Migration
             $table->string('rw', 10);
             $table->string('village', 100);
             $table->string('road', 100)->nullable();
-            $table->string('determination')->nullable();
             $table->string('sppt_persil_number', 50)->nullable();
             $table->string('block_number', 20);
             $table->double('land_area');

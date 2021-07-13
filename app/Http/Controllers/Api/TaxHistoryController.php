@@ -19,7 +19,7 @@ class TaxHistoryController extends Controller
             $taxHistory = TaxHistory::with('land')->orderBy('year', 'DESC')->where('land_id', $sppt_id)->first();
 
             $response = [
-                'nop' => $taxHistory->land->nop,
+                'nop' => (string)$taxHistory->land->nop,
                 'taxpayer_name' => $taxHistory->land->owner->name,
             ];
     
@@ -69,7 +69,7 @@ class TaxHistoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'land_id' => 'required',
+                'sppt_id' => 'required',
                 'year' => 'required',
                 'amount' => 'required|numeric',
                 'payment_status' => 'required'
@@ -83,7 +83,7 @@ class TaxHistoryController extends Controller
             }
 
             $taxHistory = TaxHistory::create([
-                'land_id' => $request->land_id,
+                'land_id' => $request->sppt_id,
                 'year' => $request->year,
                 'amount' => $request->amount,
                 'payment_status' => $request->payment_status
@@ -105,7 +105,7 @@ class TaxHistoryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'land_id' => 'required',
+                'sppt_id' => 'required',
                 'year' => 'required',
                 'amount' => 'required|numeric',
                 'payment_status' => 'required'
@@ -119,7 +119,7 @@ class TaxHistoryController extends Controller
             }
 
             TaxHistory::where('id', $id)->update([
-                'land_id' => $request->land_id,
+                'land_id' => $request->sppt_id,
                 'year' => $request->year,
                 'amount' => $request->amount,
                 'payment_status' => $request->payment_status

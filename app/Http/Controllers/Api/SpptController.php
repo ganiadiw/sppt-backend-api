@@ -8,6 +8,7 @@ use App\Http\Resources\NewMutationResource;
 use App\Http\Resources\OriginMutationResource;
 use App\Http\Resources\OwnerSearchResource;
 use App\Http\Resources\SpptResource;
+use App\Models\Guardian;
 use App\Models\Land;
 use App\Models\MutationHistory;
 use App\Models\Owner;
@@ -19,6 +20,27 @@ use Illuminate\Support\Facades\Validator;
 
 class SpptController extends Controller
 {
+    public function index()
+    {
+        try {
+            $sppts = Land::orderBy('guardian_id')->take(20)->get();
+
+            return ResponseFormatter::success(
+                [
+                    'description' => 'Hanya ditampilkan 20 data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
+                    'data' => SpptResource::collection($sppts)
+                ],
+                'SPPT data successfully loaded'
+            );
+        } catch (Exception $e) {
+            return ResponseFormatter::error(
+                'Data not found',
+                $e->getMessage(),
+                404
+            );
+        }
+    }
+
     public function showByFamily($nop)
     {
         try {
@@ -142,7 +164,6 @@ class SpptController extends Controller
                 'rw' => $request->tax_object_rw,
                 'village' => $request->tax_object_village,
                 'road' => $request->tax_object_road,
-                'determination' => $request->determination,
                 'sppt_persil_number' => $request->sppt_persil_number,
                 'block_number' => $request->block_number,
                 'land_area' => $request->land_area,
@@ -221,7 +242,6 @@ class SpptController extends Controller
                 'rw' => $request->tax_object_rw,
                 'village' => $request->tax_object_village,
                 'road' => $request->tax_object_road,
-                'determination' => $request->determination,
                 'sppt_persil_number' => $request->sppt_persil_number,
                 'block_number' => $request->block_number,
                 'land_area' => $request->land_area,
@@ -338,7 +358,6 @@ class SpptController extends Controller
                     'rw' => $originLand->rw,
                     'village' => $originLand->village,
                     'road' => $originLand->road,
-                    'determination' => $originLand->determination,
                     'sppt_persil_number' => $originLand->sppt_persil_number,
                     'block_number' => $originLand->block_number,
                     'land_area' => $remainingArea,
@@ -355,7 +374,6 @@ class SpptController extends Controller
                     'rw' => $originLand->rw,
                     'village' => $originLand->village,
                     'road' => $originLand->road,
-                    'determination' => $originLand->determination,
                     'sppt_persil_number' => $originLand->sppt_persil_number,
                     'block_number' => $originLand->block_number,
                     'land_area' => $remainingArea,
@@ -373,7 +391,6 @@ class SpptController extends Controller
                 'rw' => $request->tax_object_rw,
                 'village' => $request->tax_object_village,
                 'road' => $request->tax_object_road,
-                'determination' => $request->determination,
                 'sppt_persil_number' => $request->sppt_persil_number,
                 'block_number' => $request->block_number,
                 'land_area' => $request->land_area,
@@ -460,7 +477,6 @@ class SpptController extends Controller
                     'rw' => $land->rw,
                     'village' => $land->village,
                     'road' => $land->road,
-                    'determination' => $land->determination,
                     'sppt_persil_number' => $land->sppt_persil_number,
                     'block_number' => $land->block_number,
                     'land_area' => $land->land_area,
