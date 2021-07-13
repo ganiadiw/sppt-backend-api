@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/login', [AuthenticationController::class, 'login']);
+Route::post('/logout', [AuthenticationController::class, 'logout']);
 Route::get('/v1/families', [FamilyController::class, 'index']);
 Route::get('/v1/guardians', [GuardianController::class, 'index']);
 
@@ -41,7 +42,6 @@ Route::group(['prefix' => 'v1'], function () {
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin'], 'prefix' => 'v1'], function () {
-    Route::post('/logout', [AuthenticationController::class, 'logout']);
 
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::patch('/profile/update', [ProfileController::class, 'update']);
