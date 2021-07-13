@@ -8,6 +8,7 @@ use App\Http\Resources\NewMutationResource;
 use App\Http\Resources\OriginMutationResource;
 use App\Http\Resources\OwnerSearchResource;
 use App\Http\Resources\SpptResource;
+use App\Models\Family;
 use App\Models\Guardian;
 use App\Models\Land;
 use App\Models\MutationHistory;
@@ -24,9 +25,15 @@ class SpptController extends Controller
     {
         try {
             $sppts = Land::orderBy('guardian_id')->take(20)->get();
+            $spptTotal = Land::all()->count();
+            $familyTotal = Family::all()->count();
+            $guardianTotal = Guardian::all()->count();
 
             return ResponseFormatter::success(
                 [
+                    'total_sppt' => $spptTotal,
+                    'total_family_group' => $familyTotal,
+                    'total_guardians' => $guardianTotal,
                     'description' => 'Hanya ditampilkan 20 data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
                     'data' => SpptResource::collection($sppts)
                 ],
