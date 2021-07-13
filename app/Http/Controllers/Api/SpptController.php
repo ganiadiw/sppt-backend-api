@@ -24,7 +24,7 @@ class SpptController extends Controller
     public function index()
     {
         try {
-            $sppts = Land::orderBy('guardian_id')->take(20)->get();
+            $sppts = Land::orderBy('guardian_id')->take(10)->get();
             $spptTotal = Land::all()->count();
             $familyTotal = Family::all()->count();
             $guardianTotal = Guardian::all()->count();
@@ -34,7 +34,7 @@ class SpptController extends Controller
                     'total_sppt' => $spptTotal,
                     'total_family_group' => $familyTotal,
                     'total_guardians' => $guardianTotal,
-                    'description' => 'Hanya ditampilkan 20 data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
+                    'description' => 'Hanya ditampilkan ' . $sppts->count() . ' data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
                     'data' => SpptResource::collection($sppts)
                 ],
                 'SPPT data successfully loaded'
