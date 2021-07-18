@@ -51,13 +51,15 @@ class SpptController extends Controller
     public function showByFamily($nop)
     {
         try {
-            $land = Land::where('nop', $nop)->first();
-            
+            $land = Land::where('nop', $nop)->first();            
             $owner = Owner::where('id', $land->owner_id)->first();
-            $owners = Owner::with('land')->where('family_id', $owner->family_id)->get();
+            $owners = Owner::with('land')->where('family_id', $owner->family_id)->get()->except($owner->id);
+            $owner = new SpptResource(Land::where('nop', $nop)->first());
+            $owners = OwnerSearchResource::collection($owners);
+            $response = $owners->prepend($owner);
             
             return ResponseFormatter::success(
-                OwnerSearchResource::collection($owners),
+                $response,
                 'SPPT data successfully loaded'
             );
         } catch (Exception $e) {
