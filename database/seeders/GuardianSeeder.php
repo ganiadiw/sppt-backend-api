@@ -15,39 +15,37 @@ class GuardianSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create('id_ID');
-
         Guardian::create([
             'id' => '1',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Tezar Yohanang Wiranata',
         ]);
         Guardian::create([
             'id' => '2',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Moh. Muslih',
         ]);
         Guardian::create([
             'id' => '3',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'M. Chandra Adi Pratama',
         ]);
         Guardian::create([
             'id' => '4',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Marbani',
         ]);
         Guardian::create([
             'id' => '5',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Eko Suharianto',
         ]);
         Guardian::create([
             'id' => '6',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Prawoto',
         ]);
         Guardian::create([
             'id' => '7',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Judi Budi Santosa',
         ]);
         Guardian::create([
             'id' => '8',
-            'name' => $faker->firstName() . ' ' . $faker->lastName(),
+            'name' => 'Sujito',
         ]);
     }
 }
