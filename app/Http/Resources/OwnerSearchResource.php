@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\TaxHistory;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OwnerSearchResource extends JsonResource
@@ -48,7 +50,8 @@ class OwnerSearchResource extends JsonResource
                     'village' => $this->family->village,
                     'road' => $this->family->road,
                 ]
-            ]
+            ],
+            'current_tax' => $this->land->taxHistories->last()
         ];
     }
 }

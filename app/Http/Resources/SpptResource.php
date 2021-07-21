@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\TaxHistory;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SpptResource extends JsonResource
@@ -48,7 +50,8 @@ class SpptResource extends JsonResource
                     'village' => $this->owner->family->village,
                     'road' => $this->owner->family->road,
                 ]
-            ]
+            ],
+            'current_tax' => $this->taxHistories->last()
         ];
     }
 }
