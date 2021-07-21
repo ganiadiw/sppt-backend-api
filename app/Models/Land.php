@@ -30,7 +30,7 @@ class Land extends Model
         'updated_at',
     ];
 
-    protected $with = ['owner'];
+    protected $with = ['owner', 'taxHistories'];
     public function owner()
     {
         return $this->belongsTo(Owner::class);
