@@ -52,7 +52,8 @@ class OwnerSearchResource extends JsonResource
                 ]
             ],
             'current_tax_amount' => $this->land->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->amount ?? null,
-            'current_tax_year' => $this->land->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->year ?? null
+            'current_tax_year' => $this->land->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->year ?? null,
+            'current_tax_payment_status' => $this->land->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->payment_status ?? null
         ];
     }
 }

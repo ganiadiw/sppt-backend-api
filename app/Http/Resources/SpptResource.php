@@ -52,7 +52,8 @@ class SpptResource extends JsonResource
                 ]
             ],
             'current_tax_amount' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->amount ?? null,
-            'current_tax_year' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->year ?? null
+            'current_tax_year' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->year ?? null,
+            'current_tax_payment_status' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->payment_status ?? null
         ];
     }
 }
