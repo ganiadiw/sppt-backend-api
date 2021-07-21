@@ -51,7 +51,7 @@ class OwnerSearchResource extends JsonResource
                     'road' => $this->family->road,
                 ]
             ],
-            'current_tax' => $this->land->taxHistories->where('year', Carbon::now()->format('Y'))->flatten()
+            'current_tax' => new CurrentTaxResource($this->land->taxHistories->firstWhere('year', Carbon::now()->format('Y')))
         ];
     }
 }
