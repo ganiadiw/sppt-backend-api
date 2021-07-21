@@ -51,7 +51,8 @@ class SpptResource extends JsonResource
                     'road' => $this->owner->family->road,
                 ]
             ],
-            'current_tax' => new CurrentTaxResource($this->taxHistories->firstWhere('year', Carbon::now()->format('Y')))
+            'current_tax_amount' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->amount ?? null,
+            'current_tax_year' => $this->taxHistories->firstWhere('year', Carbon::now()->format('Y'))->year ?? null
         ];
     }
 }
