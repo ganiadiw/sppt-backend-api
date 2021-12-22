@@ -11,8 +11,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+
+//  Controller guide
+//  This controller controls about authentication
 class AuthenticationController extends Controller
 {
+    // for login function
     public function login(Request $request)
     {
         try {
@@ -64,6 +68,7 @@ class AuthenticationController extends Controller
         }
     }
 
+    // for logout function
     public function logout(Request $request)
     {
         $user = $request->user();

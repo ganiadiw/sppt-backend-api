@@ -19,8 +19,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
+
+//  Controller guide
+//  This controller controls about sppt data
 class SpptController extends Controller
 {
+    // to get 10 data from database
     public function index()
     {
         try {
@@ -48,6 +52,7 @@ class SpptController extends Controller
         }
     }
 
+    // to show sppt data by family name
     public function showByFamily($nop)
     {
         try {
@@ -71,6 +76,7 @@ class SpptController extends Controller
         }
     }
 
+    // to show sppt data by family id
     public function showByFamilyId($id)
     {
         try {
@@ -89,6 +95,7 @@ class SpptController extends Controller
         }
     }
 
+    // to show specific sppt data
     public function show($nop)
     {
         try {
@@ -107,6 +114,7 @@ class SpptController extends Controller
         }
     }
 
+    // to show sppt data by guardian
     public function showByGuardian($guardian_id)
     {
         try {
@@ -125,6 +133,7 @@ class SpptController extends Controller
         }
     }
 
+    // to store data to database
     public function store(Request $request)
     {
         try {
@@ -165,7 +174,7 @@ class SpptController extends Controller
                 'road' => $request->taxpayer_road,
             ]);
                 
-            $land = Land::create([
+            Land::create([
                 'nop' => $request->nop,
                 'owner_id' => $owner->id,
                 'guardian_id' => $request->guardian_id,
@@ -199,6 +208,7 @@ class SpptController extends Controller
         }
     }
 
+    // to update data in database
     public function update(Request $request, $nop)
     {
         try {
@@ -285,6 +295,7 @@ class SpptController extends Controller
         }
     }
 
+    // to control mutation data
     public function mutation(Request $request)
     {
         try {
@@ -459,6 +470,7 @@ class SpptController extends Controller
         }   
     }
 
+    //to update guardian id in array
     public function updateGuardianId(Request $request)
     {
         try {
@@ -508,6 +520,7 @@ class SpptController extends Controller
         }
     }
 
+    // to update family id in array
     public function updateFamilyId(Request $request)
     {
         try {
@@ -550,6 +563,7 @@ class SpptController extends Controller
         }
     }
 
+    // to delete data from database
     public function destroy ($id)
     {
         try {

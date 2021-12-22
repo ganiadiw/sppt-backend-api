@@ -11,8 +11,11 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+//  Controller guide
+//  This controller controls about family data
 class FamilyController extends Controller
 {
+    // to get all data from database
     public function index()
     {
         try {
@@ -31,6 +34,7 @@ class FamilyController extends Controller
         }
     }
 
+    // to store data to database
     public function store(Request $request)
     {
         try {
@@ -69,6 +73,7 @@ class FamilyController extends Controller
         }
     }
 
+    // to update in database
     public function update(Request $request, $id)
     {
         try {
@@ -110,6 +115,7 @@ class FamilyController extends Controller
         }
     }
 
+    // to show specific data by id from database
     public function show($id)
     {
         try {
@@ -128,6 +134,7 @@ class FamilyController extends Controller
         }
     }
 
+    // to show specific data by name from database
     public function showByName($name)
     {
         try {
@@ -146,6 +153,7 @@ class FamilyController extends Controller
         }
     }
 
+    // to delete data from database
     public function destroy($id)
     {
         try {

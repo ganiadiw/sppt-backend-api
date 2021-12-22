@@ -12,8 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
+//  Controller guide
+//  This controller controls about admin data
 class GuardianController extends Controller
 {
+    // to get all data from database
     public function index()
     {
         try {
@@ -33,6 +36,7 @@ class GuardianController extends Controller
         }
     }
 
+    // to show specific from database
     public function show($id)
     {
         try {
@@ -51,7 +55,8 @@ class GuardianController extends Controller
         }
     }
 
-    public function createGuardian(Request $request)
+    // to store data to database
+    public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -84,7 +89,8 @@ class GuardianController extends Controller
         }
     }
 
-    public function updateGuardian(Request $request, $id)
+    // to update data in database
+    public function update(Request $request, $id)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -121,6 +127,7 @@ class GuardianController extends Controller
         }
     }
 
+    // to delete data from database
     public function destroy($id)
     {
         try {

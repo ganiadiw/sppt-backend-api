@@ -9,12 +9,15 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
+
+//  Controller guide
+//  This controller controls about admin data
 class ProfileController extends Controller
 {
+    // to show profile
     public function show()
     {
         try {
@@ -33,6 +36,7 @@ class ProfileController extends Controller
         }
     }
 
+    // to update data in database
     public function update(Request $request)
     {
         try {            

@@ -10,8 +10,11 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+//  Controller guide
+//  This controller controls about admin data
 class AdministratorController extends Controller
 {
+    // To get all data from database
     public function index()
     {
         try {
@@ -31,6 +34,7 @@ class AdministratorController extends Controller
         }
     }
 
+    // To store data to database
     public function store (Request $request)
     {
         try {
@@ -75,6 +79,7 @@ class AdministratorController extends Controller
         }
     }
 
+    // to delete data from database
     public function destroy($id)
     {
         try {

@@ -65,6 +65,7 @@ class TaxHistoryController extends Controller
         }
     }
 
+    // to store data to database
     public function store(Request $request)
     {
         try {
@@ -101,6 +102,7 @@ class TaxHistoryController extends Controller
         }
     }
 
+    // to update data in database
     public function update(Request $request, $id)
     {
         try {
