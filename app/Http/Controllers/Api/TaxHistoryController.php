@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TaxHistoryRequest;
 use App\Http\Resources\TaxHistoryResource;
 use App\Models\TaxHistory;
 use Exception;
@@ -66,29 +67,13 @@ class TaxHistoryController extends Controller
     }
 
     // to store data to database
-    public function store(Request $request)
+    public function store(TaxHistoryRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'sppt_id' => 'required',
-                'year' => 'required',
-                'amount' => 'required|numeric',
-                'payment_status' => 'required'
-            ]);
+            $validatedData = $request->validated();
+            $validatedData['land_id'] = $request->sppt_id;
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            $taxHistory = TaxHistory::create([
-                'land_id' => $request->sppt_id,
-                'year' => $request->year,
-                'amount' => $request->amount,
-                'payment_status' => $request->payment_status
-            ]);
+            $taxHistory = TaxHistory::create($validatedData);
 
             return ResponseFormatter::success(
                  new TaxHistoryResource($taxHistory),
@@ -103,29 +88,13 @@ class TaxHistoryController extends Controller
     }
 
     // to update data in database
-    public function update(Request $request, $id)
+    public function update(TaxHistoryRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'sppt_id' => 'required',
-                'year' => 'required',
-                'amount' => 'required|numeric',
-                'payment_status' => 'required'
-            ]);
+            $validatedData = $request->except('sppt_id');
+            $validatedData['land_id'] = $request->sppt_id;
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            TaxHistory::where('id', $id)->update([
-                'land_id' => $request->sppt_id,
-                'year' => $request->year,
-                'amount' => $request->amount,
-                'payment_status' => $request->payment_status
-            ]);
+            TaxHistory::where('id', $id)->update($validatedData);
 
             $taxHistory = TaxHistory::find($id);
 
