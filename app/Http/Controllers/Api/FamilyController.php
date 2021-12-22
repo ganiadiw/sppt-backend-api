@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FamilyRequest;
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use App\Models\Owner;
@@ -35,31 +36,13 @@ class FamilyController extends Controller
     }
 
     // to store data to database
-    public function store(Request $request)
+    public function store(FamilyRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|max:100',
-                'rt' => 'required|max:10',
-                'rw' => 'required|max:10',
-                'village' => 'required|max:100',
-                'road' => 'max:100'
-            ]);
+            $validatedData = $request->validated();
+            $validatedData['road'] = $request->road;
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            $family = Family::create([
-                'name' => $request->name,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'village' => $request->village,
-                'road' => $request->road
-            ]);
+            $family = Family::create($validatedData);
 
             return ResponseFormatter::success(
                 $family,
@@ -74,32 +57,13 @@ class FamilyController extends Controller
     }
 
     // to update in database
-    public function update(Request $request, $id)
+    public function update(FamilyRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|max:100',
-                'rt' => 'required|max:10',
-                'rw' => 'required|max:10',
-                'village' => 'required|max:100',
-                'road' => 'max:100'
-                
-            ]);
+            $validatedData = $request->validated();
+            $validatedData['road'] = $request->road;
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            Family::where('id', $id)->update([
-                'name' => $request->name,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'village' => $request->village,
-                'road' => $request->road
-            ]);
+            Family::where('id', $id)->update($validatedData);
 
             $family = Family::find($id);
 

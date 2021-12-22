@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreGuardianRequest;
+use App\Http\Requests\UpdateGuardianRequest;
 use App\Http\Resources\GuardianResource;
 use App\Models\Guardian;
 use App\Models\Land;
@@ -56,25 +58,10 @@ class GuardianController extends Controller
     }
 
     // to store data to database
-    public function store(Request $request)
+    public function store(StoreGuardianRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'id' => 'required|unique:guardians,id',
-                'name' => 'required|max:100',
-            ]);
-
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            $guardian = Guardian::create([
-                'id' => $request->id,
-                'name' => $request->name
-            ]);
+            $guardian = Guardian::create($request->validated());
 
             $guardian = Guardian::find($request->id);
             return ResponseFormatter::success(
@@ -90,28 +77,10 @@ class GuardianController extends Controller
     }
 
     // to update data in database
-    public function update(Request $request, $id)
+    public function update(UpdateGuardianRequest $request, $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'id' => [
-                    'required',
-                    Rule::unique('guardians')->ignore($id),
-                ],
-                'name' => 'required|max:100',
-            ]);
-
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            Guardian::where('id', $id)->update([
-                'id' => $request->id,
-                'name' => $request->name,
-            ]);
+            Guardian::where('id', $id)->update($request->validated());
 
             $guardian = Guardian::find($id);
 

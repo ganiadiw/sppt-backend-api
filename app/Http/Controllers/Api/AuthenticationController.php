@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginAuthenticationRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
@@ -17,24 +18,10 @@ use Illuminate\Support\Facades\Validator;
 class AuthenticationController extends Controller
 {
     // for login function
-    public function login(Request $request)
+    public function login(LoginAuthenticationRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'username' => 'required',
-                'password' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            $credential = request(['username', 'password']);
-
-            if (!Auth::attempt($credential)) {
+            if (!Auth::attempt($request->validated())) {
                 return ResponseFormatter::error(
                     null,
                     'Invalid username or password',
