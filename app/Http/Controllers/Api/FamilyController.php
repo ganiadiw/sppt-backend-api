@@ -9,8 +9,6 @@ use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use App\Models\Owner;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 //  Controller guide
 //  This controller controls about family data
@@ -39,10 +37,7 @@ class FamilyController extends Controller
     public function store(FamilyRequest $request)
     {
         try {
-            $validatedData = $request->validated();
-            $validatedData['road'] = $request->road;
-
-            $family = Family::create($validatedData);
+            $family = Family::create($request->validated());
 
             return ResponseFormatter::success(
                 $family,
@@ -60,10 +55,7 @@ class FamilyController extends Controller
     public function update(FamilyRequest $request, $id)
     {
         try {
-            $validatedData = $request->validated();
-            $validatedData['road'] = $request->road;
-
-            Family::where('id', $id)->update($validatedData);
+            Family::where('id', $id)->update($request->validated());
 
             $family = Family::find($id);
 

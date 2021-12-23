@@ -10,9 +10,6 @@ use App\Http\Resources\GuardianResource;
 use App\Models\Guardian;
 use App\Models\Land;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 //  Controller guide
 //  This controller controls about admin data

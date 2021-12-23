@@ -8,8 +8,6 @@ use App\Http\Requests\TaxHistoryRequest;
 use App\Http\Resources\TaxHistoryResource;
 use App\Models\TaxHistory;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class TaxHistoryController extends Controller
 {
@@ -70,10 +68,9 @@ class TaxHistoryController extends Controller
     public function store(TaxHistoryRequest $request)
     {
         try {
-            $validatedData = $request->validated();
-            $validatedData['land_id'] = $request->sppt_id;
-
-            $taxHistory = TaxHistory::create($validatedData);
+            $taxHistory = TaxHistory::create($request->validated() + [
+                'land_id' => $request->sppt_id
+            ]);
 
             return ResponseFormatter::success(
                  new TaxHistoryResource($taxHistory),
@@ -91,10 +88,9 @@ class TaxHistoryController extends Controller
     public function update(TaxHistoryRequest $request, $id)
     {
         try {
-            $validatedData = $request->except('sppt_id');
-            $validatedData['land_id'] = $request->sppt_id;
-
-            TaxHistory::where('id', $id)->update($validatedData);
+            TaxHistory::where('id', $id)->update($request->validated() + [
+                'land_id' => $request->sppt_id
+            ]);
 
             $taxHistory = TaxHistory::find($id);
 

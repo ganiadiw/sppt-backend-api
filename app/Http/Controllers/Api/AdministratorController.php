@@ -8,8 +8,6 @@ use App\Http\Requests\StoreAdministratorRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 //  Controller guide
 //  This controller controls about admin data
@@ -39,10 +37,9 @@ class AdministratorController extends Controller
     public function store (StoreAdministratorRequest $request)
     {
         try {
-            $validatedData = $request->validated();
-            $validatedData['role'] = 'admin';
-
-            $user = User::create($validatedData);
+            $user = User::create($request->validated() + [
+                'role' => 'admin'
+            ]);
 
             $user->assignRole('admin');
 
