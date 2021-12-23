@@ -21,17 +21,16 @@ class ProfileController extends Controller
     {
         try {
             if (Auth::check()) {
-                return ResponseFormatter::success(
-                    new UserResource(Auth::user()),
-                    'User profile sucessfully loaded'
-                );
+                return response()->json([
+                    'message' => 'User profile sucessfully loaded',
+                    'data' => new UserResource(Auth::user())
+                ]);
             }
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -75,11 +74,9 @@ class ProfileController extends Controller
                 $payload = User::where('id', Auth::user()->id)->first();
 
                 if ($request->confirmation_password != $request->new_password) {
-                    return ResponseFormatter::error(
-                        null,
-                        'The new and confirmation password don\'t match',
-                        406
-                    );
+                    return response()->json([
+                        'message' => 'The new and confirmation password not match'
+                    ], 406);
                 }
 
                 if ($request->image) {
@@ -103,18 +100,17 @@ class ProfileController extends Controller
 
                 $user = User::where('id', Auth::user()->id)->first();
 
-                return ResponseFormatter::success(
-                    new UserResource($user),
-                    'Profile data successfully updated'
-                );
+                return response()->json([
+                    'message' => 'Profile data successfully updated',
+                    'data' => new UserResource($user)
+                ]);
             }
 
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update profile data',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 }

@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Validation\Rule;
 
 //  Controller guide
 //  This controller controls about sppt data
@@ -33,22 +33,21 @@ class SpptController extends Controller
             $familyTotal = Family::all()->count();
             $guardianTotal = Guardian::all()->count();
 
-            return ResponseFormatter::success(
-                [
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => [
                     'total_sppt' => $spptTotal,
                     'total_family_group' => $familyTotal,
                     'total_guardians' => $guardianTotal,
                     'description' => 'Hanya ditampilkan ' . $sppts->count() . ' data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
                     'data' => SpptResource::collection($sppts)
-                ],
-                'SPPT data successfully loaded'
-            );
+                ]
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -63,16 +62,15 @@ class SpptController extends Controller
             $owners = OwnerSearchResource::collection($owners);
             $response = $owners->prepend($owner);
             
-            return ResponseFormatter::success(
-                $response,
-                'SPPT data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => $response
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -82,16 +80,15 @@ class SpptController extends Controller
         try {
             $owners = Owner::with('land')->where('family_id', $id)->get();
             
-            return ResponseFormatter::success(
-                OwnerSearchResource::collection($owners),
-                'SPPT data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => OwnerSearchResource::collection($owners)
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -101,16 +98,15 @@ class SpptController extends Controller
         try {
             $sppt = Land::where('nop', $nop)->first();
 
-            return ResponseFormatter::success(
-                new SpptResource($sppt),
-                'SPPT data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => new SpptResource($sppt)
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -120,16 +116,15 @@ class SpptController extends Controller
         try {
             $sppt = Land::where('guardian_id', $guardian_id)->get();
 
-            return ResponseFormatter::success(
-                SpptResource::collection($sppt),
-                'SPPT data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => SpptResource::collection($sppt)
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -158,10 +153,10 @@ class SpptController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
 
             DB::beginTransaction();
@@ -194,26 +189,25 @@ class SpptController extends Controller
 
             $sppt = Land::where('nop', $request->nop)->first();
 
-            return ResponseFormatter::success(
-                new SpptResource($sppt),
-                'Successfully created SPPT data'
-            );
+            return response()->json([
+                'message' => 'Successfully created SPPT data',
+                'data' => new SpptResource($sppt)
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return ResponseFormatter::error(
-                'Failed to create SPPT data',
-                $e->getMessage(),
-                400
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to update data in database
-    public function update(Request $request, $nop)
+    public function update(Request $request, Land $land)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'nop' => 'required',
+                'nop' => ['required', Rule::unique('lands')->ignore($land->id)],
                 'taxpayer_name' => 'required|max:100',
                 'taxpayer_rt'  => 'required|max:10',
                 'taxpayer_rw' => 'required|max:10',
@@ -233,27 +227,15 @@ class SpptController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
             
             DB::beginTransaction();
-            $land = Land::where('nop', $nop)->first();
-            $existingDatas = Land::all()->except($land->id);
 
-            foreach ($existingDatas as $existingData) {
-                if ($request->nop == $existingData->nop){
-                    return ResponseFormatter::error(
-                        null,
-                        'NOP already exist',
-                        409
-                    );
-                }  
-            }
-
-            Land::where('nop', $land->nop)->update([
+            $land->update([
                 'nop' => $request->nop,
                 'owner_id' => $land->owner_id,
                 'guardian_id' => $request->guardian_id,
@@ -279,19 +261,16 @@ class SpptController extends Controller
             ]);
             DB::commit();
 
-            $sppt = Land::where('nop', $request->nop)->first();
-
-            return ResponseFormatter::success(
-                new SpptResource($sppt),
-                'SPPT data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully loaded',
+                'data' => new SpptResource($land)
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return ResponseFormatter::error(
-                'Failed to update SPPT data',
-                $e->getMessage(),
-                400
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -321,19 +300,18 @@ class SpptController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
     
             $landTarget = Land::where('nop', $request->nop_target)->first();
             if (!$landTarget) {
-                return ResponseFormatter::error(
-                    null,
-                    'SPPT target data not found',
-                    404
-                );
+
+                return response()->json([
+                    'message' => 'SPPT target data not found',
+                ], 404);
             }
             
             $remainingArea = $landTarget->land_area - $request->land_area;
@@ -342,11 +320,9 @@ class SpptController extends Controller
             $originOwner = Owner::find($originLand->owner_id);
 
             if ($remainingArea < 0) {
-                return ResponseFormatter::error(
-                    null,
+                return response()->json([
                     'The area of ​​the target land is zero, so it cannot reduce the area of ​​the land, make sure the mutation value does not exceed the value of the target land area',
-                    400
-                );
+                ], 400);
             }
 
             DB::beginTransaction();
@@ -363,11 +339,10 @@ class SpptController extends Controller
             if ($landTarget->building_area != 0) {
                 if ($remainingBuildingArea < 0) {
                     DB::rollBack();
-                    return ResponseFormatter::error(
-                        null,
-                        'The area of ​​the target building is zero, so it cannot reduce the area of ​​the building, make sure the mutation value does not exceed the value of the target building area',
-                        400
-                    );
+
+                    return response()->json([
+                        'message' => 'The area of ​​the target building is zero, so it cannot reduce the area of ​​the building, make sure the mutation value does not exceed the value of the target building area',
+                    ], 400);
                 }
 
                 Land::where('nop', $request->nop_target)->update([
@@ -454,19 +429,19 @@ class SpptController extends Controller
 
             DB::commit();
 
-            return ResponseFormatter::success(
-                [
+            return response()->json([
+                'message' => 'Mutation data was successfully created',
+                'data' => [
                     new OriginMutationResource($originLand),
                     new NewMutationResource($newLand),
-                ],
-                'Mutation data was successfully created'
-            );
+                ]
+            ]);
         } catch (Exception $e) {
             DB::rollBack();
-            return ResponseFormatter::error(
-                'Failed to create mutation data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }   
     }
 
@@ -481,10 +456,10 @@ class SpptController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
 
             foreach ($request->sppt_objects as $key => $value) {
@@ -507,16 +482,14 @@ class SpptController extends Controller
                 ]);
             }
 
-            return ResponseFormatter::success(
-                'SPPT data successfully updated',
-                'SPPT data successfully updated'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully updated'
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update SPPT data',
-                $e->getMessage(),
-                400
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -531,10 +504,10 @@ class SpptController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
 
             foreach ($request->sppt_objects as $key => $value) {
@@ -550,34 +523,24 @@ class SpptController extends Controller
                 ]);
             }
 
-            return ResponseFormatter::success(
-                'SPPT data successfully updated',
-                'SPPT data successfully updated'
-            );
+            return response()->json([
+                'message' => 'SPPT data successfully updated'
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update SPPT data',
-                $e->getMessage(),
-                400
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to delete data from database
     public function destroy ($id)
     {
-        try {
-            Owner::findOrFail($id)->delete();
-            return ResponseFormatter::success(
-                'The data has been deleted',
-                'SPPT data successfully deleted'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to delete SPPT data',
-                $e->getMessage(),
-                404
-            );
-        }
+        Owner::findOrFail($id)->delete();
+
+        return response()->json([
+            'message' => 'The data has been deleted'
+        ]);
     }
 }

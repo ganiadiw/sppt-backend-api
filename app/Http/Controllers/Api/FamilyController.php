@@ -18,18 +18,14 @@ class FamilyController extends Controller
     public function index()
     {
         try {
-            $families = Family::orderBy('name')->get();
-
-            return ResponseFormatter::success(
-                FamilyResource::collection($families),
-                'Families data successfully loaded'
-            );
+            return FamilyResource::collection(Family::orderBy('name')
+                    ->paginate(20))
+                    ->additional(['message' => 'Families data successfully loaded']);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -39,15 +35,15 @@ class FamilyController extends Controller
         try {
             $family = Family::create($request->validated());
 
-            return ResponseFormatter::success(
-                $family,
-                'Family data was successfully created'
-            );
+            return response()->json([
+                'message' => 'Family data was successfully created',
+                'data' => $family
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create family data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -59,35 +55,25 @@ class FamilyController extends Controller
 
             $family = Family::find($id);
 
-            return ResponseFormatter::success(
-                $family,
-                'Family data successfully updated'
-            );
+            return response()->json([
+                'message' => 'Family data successfully updated',
+                'data' => $family
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update family data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to show specific data by id from database
-    public function show($id)
+    public function show(Family $family)
     {
-        try {
-            $family = Family::findOrFail($id);
-
-            return ResponseFormatter::success(
-                $family,
-                'Family data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return response()->json([
+            'message' => 'Family data successfully loaded',
+            'data' => new FamilyResource($family)
+        ]);
     }
 
     // to show specific data by name from database
@@ -96,51 +82,40 @@ class FamilyController extends Controller
         try {
             $families = Family::where('name', 'LIKE', '%' . $name . '%')->get();
 
-            return ResponseFormatter::success(
-                $families,
-                'Families data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'Families data successfully loaded',
+                'data' => $families
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage().
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to delete data from database
-    public function destroy($id)
+    public function destroy(Family $family)
     {
-        try {
-            $owner = Owner::where('family_id', $id)->get();
-            $ownerCount = $owner->count();
+        $owner = Owner::where('family_id', $family->id)->get();
+        $ownerCount = $owner->count();
 
-            if ($ownerCount != 0) {
-                $response = [
-                    'family_id' => $id,
-                    'number_of_connected_data' => $ownerCount
-                ];
-                return ResponseFormatter::error(
-                    $response,
-                    'family data is still connected to other data, please update the connected data first',
-                    409
-                );
-            } else {
-                Family::findOrFail($id)->delete();
+        if ($ownerCount != 0) {
+            $response = [
+                'family_id' => $family->id,
+                'number_of_connected_data' => $ownerCount
+            ];
 
-                return ResponseFormatter::success(
-                    'The data has been deleted successfully deleted',
-                    'Successful delete data'
-                );
-            }
+            return response()->json([
+                'message' => 'family data is still connected to other data, please update the connected data first',
+                'connected_data' => $response
+            ], 409);
+        } else {
+            $family->delete();
 
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'The data has been deleted successfully'
+            ]);
         }
     }
 }

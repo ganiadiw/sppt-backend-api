@@ -21,11 +21,9 @@ class AuthenticationController extends Controller
     {
         try {
             if (!Auth::attempt($request->validated())) {
-                return ResponseFormatter::error(
-                    null,
-                    'Invalid username or password',
-                    401
-                );
+                return response()->json([
+                    'message' => 'Invalid username or password',
+                ], 401);
             }
 
             $user = User::where('username', $request->username)->first();
@@ -33,24 +31,30 @@ class AuthenticationController extends Controller
             $token = $user->createToken(Auth::user()->name)->plainTextToken;
 
             if ($user->hasRole('super-admin')) {
-                return ResponseFormatter::success([
+                return response()->json([
+                    'message' => 'Authentication successful',
+                    'data' => [
+                        'access_token' => $token,
+                        'token_type' => 'Bearer Token',
+                        'user' => new UserResource($user)
+                    ]
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Authentication successful',
+                'data' => [
                     'access_token' => $token,
                     'token_type' => 'Bearer Token',
                     'user' => new UserResource($user)
-                ], 'Authentication successful');
-            }
-
-            return ResponseFormatter::success([
-                'access_token' => $token,
-                'token_type' => 'Bearer Token',
-                'user' => new UserResource($user)
-            ], 'Authentication successful');
+                ]
+            ]);
 
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Authenticaion failed',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -59,6 +63,6 @@ class AuthenticationController extends Controller
     {
         $user = $request->user();
         $user->currentAccessToken()->delete();
-        return ResponseFormatter::success('Token revoked, successful loged out');
+        return response()->json(['message' => 'Token revoked, successful loged out'], 200);
     }
 }

@@ -21,37 +21,26 @@ class GuardianController extends Controller
         try {
             $guardians = Guardian::all();
 
-            return ResponseFormatter::success(
-                GuardianResource::collection($guardians),
-                'Guardians data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'Guardians data successfully loaded',
+                'data' => GuardianResource::collection($guardians)
+            ]);
 
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to show specific from database
-    public function show($id)
+    public function show(Guardian $guardian)
     {
-        try {
-            $guardian = Guardian::findOrFail($id);
-
-            return ResponseFormatter::success(
-                new GuardianResource($guardian),
-                'GUardian data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return response()->json([
+            'message' => 'Guardian data successfully loaded',
+            'data' => new GuardianResource($guardian)
+        ]);
     }
 
     // to store data to database
@@ -61,69 +50,60 @@ class GuardianController extends Controller
             $guardian = Guardian::create($request->validated());
 
             $guardian = Guardian::find($request->id);
-            return ResponseFormatter::success(
-                $guardian,
-                'Guardian data was created successfully'
-            );
+
+            return response()->json([
+                'message' => 'Guardian data was created successfully',
+                'data' => $guardian
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create guardian data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to update data in database
-    public function update(UpdateGuardianRequest $request, $id)
+    public function update(UpdateGuardianRequest $request, Guardian $guardian)
     {
         try {
-            Guardian::where('id', $id)->update($request->validated());
+            Guardian::where('id', $guardian->id)->update($request->validated());
 
-            $guardian = Guardian::find($id);
+            $guardian = Guardian::find($guardian->id);
 
-            return ResponseFormatter::success(
-                $guardian,
-                'Guardian data successfully updated'
-            );
+            return response()->json([
+                'message' => 'Guardian data successfully updated',
+                'data' => $guardian
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update guardian data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to delete data from database
-    public function destroy($id)
+    public function destroy(Guardian $guardian)
     {
-        try {
-            $land = Land::where('guardian_id',$id)->get();
-            $landCount = $land->count();
+        $landCount = Land::where('guardian_id',$guardian->id)->get()->count();
 
-            if ($landCount != 0) {
-                $response = [
-                    'guardian_id' => $id,
-                    'number_of_connected_data' => $landCount
-                ];
-                return ResponseFormatter::error(
-                    $response,
-                    'guardian data is still connected to other data, please update the connected data first',
-                    409
-                );
-            } else {
-                Guardian::findOrFail($id)->delete();
+        if ($landCount != 0) {
+            $response = [
+                'guardian_id' => $guardian->id,
+                'number_of_connected_data' => $landCount
+            ];
 
-                return ResponseFormatter::success(
-                    'The data has been deleted successfully deleted',
-                    'Successful delete data'
-                );
-            }
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'guardian data is still connected to other data, please update the connected data first',
+                'connected_data' => $response
+            ], 409);
+        } else {
+            $guardian->delete();
+
+            return response()->json([
+                'message' => 'The data has been deleted successfully'
+            ]);
         }
     }
 }

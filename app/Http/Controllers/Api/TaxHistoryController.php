@@ -21,47 +21,36 @@ class TaxHistoryController extends Controller
                 'nop' => (string)$taxHistory->land->nop,
                 'taxpayer_name' => $taxHistory->land->owner->name,
             ];
-    
-            return ResponseFormatter::success(
-                [
+
+            return response()->json([
+                'message' => 'Tax histories successfully loaded',
+                'data' => [
                     'sppt' => $response,
                     'tax_histories' => TaxHistoryResource::collection($taxHistories)
-                ],
-                'Tax histories successfully loaded'
-            );
+                ]
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function show($id)
+    public function show(TaxHistory $taxHistory)
     {
-        try {
-            $taxHistory = TaxHistory::with('land')->where('id', $id)->first();
+        $response = [
+            'nop' => $taxHistory->land->nop,
+            'taxpayer_name' => $taxHistory->land->owner->name,
+        ];
 
-            $response = [
-                'nop' => $taxHistory->land->nop,
-                'taxpayer_name' => $taxHistory->land->owner->name,
-            ];
-    
-            return ResponseFormatter::success(
-                [
-                    'sppt' => $response,
-                    'tax_histories' => new TaxHistoryResource($taxHistory)
-                ],
-                'Tax histories successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return response()->json([
+            'message' => 'Tax histories successfully loaded',
+            'data' => [
+                'sppt' => $response,
+                'tax_histories' => new TaxHistoryResource($taxHistory)
+            ]
+        ]);
     }
 
     // to store data to database
@@ -72,54 +61,44 @@ class TaxHistoryController extends Controller
                 'land_id' => $request->sppt_id
             ]);
 
-            return ResponseFormatter::success(
-                 new TaxHistoryResource($taxHistory),
-                'Tax history was successfully created'
-            );
+            return response()->json([
+                'message' => 'Tax history was successfully created',
+                'data' => new TaxHistoryResource($taxHistory)
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create tax history data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to update data in database
-    public function update(TaxHistoryRequest $request, $id)
+    public function update(TaxHistoryRequest $request, TaxHistory $taxHistory)
     {
         try {
-            TaxHistory::where('id', $id)->update($request->validated() + [
+            $taxHistory->update($request->validated() + [
                 'land_id' => $request->sppt_id
             ]);
-
-            $taxHistory = TaxHistory::find($id);
-
-            return ResponseFormatter::success(
-                 new TaxHistoryResource($taxHistory),
-                'Tax history was successfully updated'
-            );
+    
+            return response()->json([
+                'message' => 'Tax history was successfully updated',
+                'data' => new TaxHistoryResource($taxHistory)
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update tax history data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function destroy($id)
+    public function destroy(TaxHistory $taxHistory)
     {
-        try {
-            TaxHistory::findOrFail($id)->delete();
-            return ResponseFormatter::success(
-                'The data has been deleted',
-                'Tax history data successfully deleted'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to delete tax history data',
-                $e->getMessage(),
-                404
-            );
-        }
+        $taxHistory->delete();
+
+        return response()->json([
+            'message' => 'The data has been deleted'
+        ]);
     }
 }

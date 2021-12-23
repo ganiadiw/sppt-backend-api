@@ -17,19 +17,14 @@ class AdministratorController extends Controller
     public function index()
     {
         try {
-            $users = User::all();
-
-            return ResponseFormatter::success(
-                UserResource::collection($users),
-                'Users data sucessfully loaded'
-            );
+            return UserResource::collection(User::paginate(10))
+                    ->additional(['message' => 'Users data sucessfully loaded']);
 
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);            
         }
     }
 
@@ -43,36 +38,26 @@ class AdministratorController extends Controller
 
             $user->assignRole('admin');
 
-            return ResponseFormatter::success(
-                new UserResource($user),
-                'User data was successfully created'
-            );
-
+            return response()->json([
+                'message' => 'User data was successfully created',
+                'data' => new UserResource($user)
+            ], 200);
 
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create user data',
-                $e->getMessage(),
-                400
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
     // to delete data from database
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        try {
-            User::findOrFail($id)->delete();
+        $user->delete();
 
-            return ResponseFormatter::success(
-                null,
-                'Suceessful delete user data'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to delete user data',
-                $e->getMessage()
-            );
-        }
+        return response()->json([
+            'message' => 'Succesful delete user data'
+        ], 200);
     }
 }
