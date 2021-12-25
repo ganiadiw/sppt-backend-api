@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TaxHistoryRequest;
 use App\Http\Resources\TaxHistoryResource;
@@ -56,41 +55,27 @@ class TaxHistoryController extends Controller
     // to store data to database
     public function store(TaxHistoryRequest $request)
     {
-        try {
-            $taxHistory = TaxHistory::create($request->validated() + [
-                'land_id' => $request->sppt_id
-            ]);
+        $taxHistory = TaxHistory::create($request->validated() + [
+            'land_id' => $request->sppt_id
+        ]);
 
-            return response()->json([
-                'message' => 'Tax history was successfully created',
-                'data' => new TaxHistoryResource($taxHistory)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Tax history was successfully created',
+            'data' => new TaxHistoryResource($taxHistory)
+        ]);
     }
 
     // to update data in database
     public function update(TaxHistoryRequest $request, TaxHistory $taxHistory)
     {
-        try {
-            $taxHistory->update($request->validated() + [
-                'land_id' => $request->sppt_id
-            ]);
-    
-            return response()->json([
-                'message' => 'Tax history was successfully updated',
-                'data' => new TaxHistoryResource($taxHistory)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        $taxHistory->update($request->validated() + [
+            'land_id' => $request->sppt_id
+        ]);
+
+        return response()->json([
+            'message' => 'Tax history was successfully updated',
+            'data' => new TaxHistoryResource($taxHistory)
+        ]);
     }
 
     public function destroy(TaxHistory $taxHistory)

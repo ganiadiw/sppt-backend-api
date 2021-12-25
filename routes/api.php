@@ -32,8 +32,9 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('sppts/', [SpptController::class, 'index']);
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
-        Route::get('/family/{family}', [SpptController::class, 'showByFamilyId']);
-        Route::get('/{nop}', [SpptController::class, 'show']);
+        Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
+        Route::get('/{land:nop}', [SpptController::class, 'showByNop']);
+        Route::get('/{land}', [SpptController::class, 'show']);
         Route::get('/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
         Route::get('/tax-histories/{sppt_id}', [TaxHistoryController::class, 'showTaxHistory']);
         Route::get('/tax-history/{taxHistory}', [TaxHistoryController::class, 'show']);
@@ -49,7 +50,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin']], funct
     
         Route::group(['prefix' => 'family'], function () {
             Route::post('/', [FamilyController::class, 'store']);
-            Route::patch('/{id}', [FamilyController::class, 'update']);
+            Route::patch('/{family}', [FamilyController::class, 'update']);
         });
     
         Route::group(['prefix' => 'sppt'], function () {

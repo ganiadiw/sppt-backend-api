@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
@@ -19,18 +18,11 @@ class ProfileController extends Controller
     // to show profile
     public function show()
     {
-        try {
-            if (Auth::check()) {
-                return response()->json([
-                    'message' => 'User profile sucessfully loaded',
-                    'data' => new UserResource(Auth::user())
-                ]);
-            }
-        } catch (Exception $e) {
+        if (Auth::check()) {
             return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
+                'message' => 'User profile sucessfully loaded',
+                'data' => new UserResource(Auth::user())
+            ]);
         }
     }
 
@@ -63,14 +55,13 @@ class ProfileController extends Controller
                 $user = User::where('id', Auth::user()->id)->update($validatedData);                
                 $user = User::where('id', Auth::user()->id)->first();
 
-                return ResponseFormatter::success(
-                    new UserResource($user),
-                    'Profile data successfully updated'
-                );
+                return response()->json([
+                    'message' => 'Profile data successfully updated',
+                    'data' => new UserResource($user)
+                ]);
             }
 
             if ($request->new_password != null){
-                // $existingDatas = User::all()->except(Auth::id());
                 $payload = User::where('id', Auth::user()->id)->first();
 
                 if ($request->confirmation_password != $request->new_password) {
@@ -97,7 +88,6 @@ class ProfileController extends Controller
                 $validatedData['password'] = bcrypt($request->new_password);
 
                 $user = User::where('id', Auth::user()->id)->update($validatedData);
-
                 $user = User::where('id', Auth::user()->id)->first();
 
                 return response()->json([

@@ -18,7 +18,7 @@ class LandSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create('ID_id');
-        $owner = DB::table('owners')->count();
+        // $owner = DB::table('owners')->count();
         $guardian = DB::table('guardians')->count();
         
         for ($i=1; $i < 100; $i++) { 
@@ -26,7 +26,7 @@ class LandSeeder extends Seeder
 
             Land::create([
                 'nop' => 3503010111 . $blockNumber . $faker->randomNumber(4, true) . 7,
-                'owner_id' => $faker->numberBetween(1, $owner),
+                'owner_id' => $i,
                 'guardian_id' => $faker->numberBetween(1, $guardian),
                 'rt' => $faker->randomElement(['001', '002', '003', '004', '005', '006', '007', '008', '009', '010']),
                 'rw' => $faker->randomElement(['001', '002', '003', '004', '005', '006', '007', '008', '009', '010']),

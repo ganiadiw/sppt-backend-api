@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FamilyRequest;
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use App\Models\Owner;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 //  Controller guide
 //  This controller controls about family data
@@ -17,54 +17,73 @@ class FamilyController extends Controller
     // to get all data from database
     public function index()
     {
-        try {
-            return FamilyResource::collection(Family::orderBy('name')
-                    ->paginate(20))
-                    ->additional(['message' => 'Families data successfully loaded']);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        return FamilyResource::collection(Family::orderBy('name')
+                ->paginate(20))
+                ->additional(['message' => 'Families data successfully loaded']);
     }
 
     // to store data to database
-    public function store(FamilyRequest $request)
+    public function store(Request $request)
     {
-        try {
-            $family = Family::create($request->validated());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:100',
+            'rt' => 'required|max:10',
+            'rw' => 'required|max:10',
+            'village' => 'required|max:100',
+            'road' => 'max:100'
+        ]);
 
+        if ($validator->fails()) {
             return response()->json([
-                'message' => 'Family data was successfully created',
-                'data' => $family
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
+                'message' => 'The given data was invalid',
+                'errors' => $validator->errors()
+            ], 422);
         }
+
+        $family = Family::create([
+            'name' => $request->name,
+            'rt' => $request->rt,
+            'rw' => $request->rw,
+            'village' => $request->village,
+            'road' => $request->road
+        ]);
+
+        return response()->json([
+            'message' => 'Family data successfully created',
+            'data' => $family
+        ]);
     }
 
     // to update in database
-    public function update(FamilyRequest $request, $id)
+    public function update(Request $request, Family $family)
     {
-        try {
-            Family::where('id', $id)->update($request->validated());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:100',
+            'rt' => 'required|max:10',
+            'rw' => 'required|max:10',
+            'village' => 'required|max:100',
+            'road' => 'max:100'
+        ]);
 
-            $family = Family::find($id);
-
+        if ($validator->fails()) {
             return response()->json([
-                'message' => 'Family data successfully updated',
-                'data' => $family
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
+                'message' => 'The given data was invalid',
+                'errors' => $validator->errors()
+            ], 422);
         }
+
+        Family::where('id', $family->id)->update([
+            'name' => $request->name,
+            'rt' => $request->rt,
+            'rw' => $request->rw,
+            'village' => $request->village,
+            'road' => $request->road
+        ]);
+
+        return response()->json([
+            'message' => 'Family data successfully updated',
+            'data' => Family::find($family->id)
+        ]);
     }
 
     // to show specific data by id from database

@@ -23,7 +23,7 @@ class OwnerSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $family = DB::table('families')->count();
 
-        for ($i=1; $i < 200; $i++) { 
+        for ($i=1; $i < 100; $i++) { 
             Owner::create([
                 'family_id' => $faker->numberBetween(1, $family),
                 'name' => $faker->firstName() . ' ' . $faker->lastName(),

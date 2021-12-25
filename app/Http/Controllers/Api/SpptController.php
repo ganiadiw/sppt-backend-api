@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NewMutationResource;
 use App\Http\Resources\OriginMutationResource;
@@ -27,45 +26,33 @@ class SpptController extends Controller
     // to get 10 data from database
     public function index()
     {
-        try {
-            $sppts = Land::orderBy('guardian_id')->take(10)->get();
-            $spptTotal = Land::all()->count();
-            $familyTotal = Family::all()->count();
-            $guardianTotal = Guardian::all()->count();
+        $sppts = Land::orderBy('guardian_id')->take(10)->get();
 
-            return response()->json([
-                'message' => 'SPPT data successfully loaded',
-                'data' => [
-                    'total_sppt' => $spptTotal,
-                    'total_family_group' => $familyTotal,
-                    'total_guardians' => $guardianTotal,
-                    'description' => 'Hanya ditampilkan ' . $sppts->count() . ' data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
-                    'data' => SpptResource::collection($sppts)
-                ]
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => [
+                'total_sppt' => Land::count(),
+                'total_family_group' => Family::count(),
+                'total_guardians' => Guardian::count(),
+                'description' => 'Hanya ditampilkan ' . $sppts->count() . ' data teratas. Gunakan pencarian untuk mencari data yang diinginkan',
+                'data' => SpptResource::collection($sppts)
+            ]
+        ]);
     }
 
-    // to show sppt data by family name
+    // to show sppt data group by nop
     public function showByFamily($nop)
     {
         try {
-            $land = Land::where('nop', $nop)->first();            
-            $owner = Owner::where('id', $land->owner_id)->first();
-            $owners = Owner::with('land')->where('family_id', $owner->family_id)->get()->except($owner->id);
-            $owner = new SpptResource(Land::where('nop', $nop)->first());
-            $owners = OwnerSearchResource::collection($owners);
-            $response = $owners->prepend($owner);
-            
+            $land = Land::with('owner')->where('nop', $nop)->first();
+            $owners = Owner::with('land')->where('family_id', $land->owner->family_id)
+                        ->get()->except($land->id);
+            $response = OwnerSearchResource::collection($owners);
+    
             return response()->json([
                 'message' => 'SPPT data successfully loaded',
-                'data' => $response
-            ]);
+                'data' => $response->prepend(new SpptResource($land))
+            ]);            
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Something wrong happened',
@@ -74,7 +61,7 @@ class SpptController extends Controller
         }
     }
 
-    // to show sppt data by family id
+    // to show sppt data group family id
     public function showByFamilyId($id)
     {
         try {
@@ -92,40 +79,33 @@ class SpptController extends Controller
         }
     }
 
-    // to show specific sppt data
-    public function show($nop)
+    // to show specific sppt data by nop number
+    public function showByNop(Land $land)
     {
-        try {
-            $sppt = Land::where('nop', $nop)->first();
-
-            return response()->json([
-                'message' => 'SPPT data successfully loaded',
-                'data' => new SpptResource($sppt)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => new SpptResource($land)
+        ]);
+    }
+    
+    // to show specific sppt data by id
+    public function show(Land $land)
+    {
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => new SpptResource($land)
+        ]);
     }
 
     // to show sppt data by guardian
     public function showByGuardian($guardian_id)
     {
-        try {
-            $sppt = Land::where('guardian_id', $guardian_id)->get();
+        $sppt = Land::where('guardian_id', $guardian_id)->get();
 
-            return response()->json([
-                'message' => 'SPPT data successfully loaded',
-                'data' => SpptResource::collection($sppt)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => SpptResource::collection($sppt)
+        ]);
     }
 
     // to store data to database
