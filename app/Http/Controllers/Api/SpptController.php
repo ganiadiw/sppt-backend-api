@@ -43,40 +43,26 @@ class SpptController extends Controller
     // to show sppt data group by nop
     public function showByFamily($nop)
     {
-        try {
-            $land = Land::with('owner')->where('nop', $nop)->first();
-            $owners = Owner::with('land')->where('family_id', $land->owner->family_id)
-                        ->get()->except($land->id);
-            $response = OwnerSearchResource::collection($owners);
-    
-            return response()->json([
-                'message' => 'SPPT data successfully loaded',
-                'data' => $response->prepend(new SpptResource($land))
-            ]);            
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        $land = Land::with('owner')->where('nop', $nop)->first();
+        $owners = Owner::with('land')->where('family_id', $land->owner->family_id)
+                    ->get()->except($land->id);
+        $response = OwnerSearchResource::collection($owners);
+
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => $response->prepend(new SpptResource($land))
+        ]);
     }
 
     // to show sppt data group family id
     public function showByFamilyId($id)
     {
-        try {
-            $owners = Owner::with('land')->where('family_id', $id)->get();
-            
-            return response()->json([
-                'message' => 'SPPT data successfully loaded',
-                'data' => OwnerSearchResource::collection($owners)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Something wrong happened',
-                'errors' => $e->getMessage()
-            ], 500);
-        }
+        $owners = Owner::with('land')->where('family_id', $id)->get();
+        
+        return response()->json([
+            'message' => 'SPPT data successfully loaded',
+            'data' => OwnerSearchResource::collection($owners)
+        ]);
     }
 
     // to show specific sppt data by nop number
