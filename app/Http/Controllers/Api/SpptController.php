@@ -55,26 +55,28 @@ class SpptController extends Controller
     }
 
     // to show sppt data group family id
-    public function showByFamilyId($id)
+    public function showByFamilyId($byFamily)
     {
-        $owners = Owner::with('land')->where('family_id', $id)->get();
+        $land = Land::with('owner')->where('nop', $byFamily)->first();
+        $owner = Owner::with('land')->where('family_id', $byFamily)->first();
         
-        return response()->json([
-            'message' => 'SPPT data successfully loaded',
-            'data' => OwnerSearchResource::collection($owners)
-        ]);
-    }
+        if ($land != null) {
+            $owners = Owner::with('land')->where('family_id', $land->owner->family_id)
+                    ->get()->except($land->id);
+            $response = OwnerSearchResource::collection($owners);
+            $response = $response->prepend(new SpptResource($land));
+        } elseif ($owner != null) {
+            $owners = Owner::with('land')->where('family_id', $byFamily)->get();
+            $response = OwnerSearchResource::collection($owners);
+        }
 
-    // to show specific sppt data by nop number
-    public function showByNop(Land $land)
-    {
         return response()->json([
             'message' => 'SPPT data successfully loaded',
-            'data' => new SpptResource($land)
+            'data' => $response
         ]);
     }
     
-    // to show specific sppt data by id
+    // to show specific sppt data by id or nop
     public function show(Land $land)
     {
         return response()->json([

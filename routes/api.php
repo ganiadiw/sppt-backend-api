@@ -32,8 +32,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('sppts/', [SpptController::class, 'index']);
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
-        Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
-        Route::get('/{land:nop}', [SpptController::class, 'showByNop']);
+        // Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
+        Route::get('/family/{byFamily}', [SpptController::class, 'showByFamilyId']);
         Route::get('/{land}', [SpptController::class, 'show']);
         Route::get('/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
         Route::get('/tax-histories/{sppt_id}', [TaxHistoryController::class, 'showTaxHistory']);

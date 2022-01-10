@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FamilyRequest;
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use App\Models\Owner;
@@ -23,30 +24,9 @@ class FamilyController extends Controller
     }
 
     // to store data to database
-    public function store(Request $request)
+    public function store(FamilyRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:100',
-            'rt' => 'required|max:10',
-            'rw' => 'required|max:10',
-            'village' => 'required|max:100',
-            'road' => 'max:100'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'The given data was invalid',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $family = Family::create([
-            'name' => $request->name,
-            'rt' => $request->rt,
-            'rw' => $request->rw,
-            'village' => $request->village,
-            'road' => $request->road
-        ]);
+        $family = Family::create($request->validated());
 
         return response()->json([
             'message' => 'Family data successfully created',
@@ -55,30 +35,9 @@ class FamilyController extends Controller
     }
 
     // to update in database
-    public function update(Request $request, Family $family)
+    public function update(FamilyRequest $request, Family $family)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|max:100',
-            'rt' => 'required|max:10',
-            'rw' => 'required|max:10',
-            'village' => 'required|max:100',
-            'road' => 'max:100'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'The given data was invalid',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        Family::where('id', $family->id)->update([
-            'name' => $request->name,
-            'rt' => $request->rt,
-            'rw' => $request->rw,
-            'village' => $request->village,
-            'road' => $request->road
-        ]);
+        $family->update($request->validated());
 
         return response()->json([
             'message' => 'Family data successfully updated',
