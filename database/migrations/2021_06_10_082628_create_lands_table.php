@@ -28,8 +28,7 @@ class CreateLandsTable extends Migration
             $table->string('land_area_unit', 10);
             $table->double('building_area');
             $table->string('building_area_unit', 10);
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->timestamps();
         });
     }
 

@@ -2,184 +2,82 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
+
+//  Controller guide
+//  This controller controls about admin data
 class ProfileController extends Controller
 {
+    // to show profile
     public function show()
     {
-        try {
-            if (Auth::check()) {
-                return ResponseFormatter::success(
-                    new UserResource(Auth::user()),
-                    'User profile sucessfully loaded'
-                );
-            }
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+        if (Auth::check()) {
+            return response()->json([
+                'message' => 'User profile sucessfully loaded',
+                'data' => new UserResource(Auth::user())
+            ]);
         }
     }
 
-    public function update(Request $request)
+    public function checkImage(Request $request)
     {
-        try {            
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'occupation' => 'required',
-                'username' => 'required|max:100',
-                'email' => 'required',
-                'image' => 'image|mimes:png,jpg,jpeg',
-                '_method' => 'required',
-                'confirmation_password' => 'min:8',
-                'new_password' => 'min:8'
-            ]);
+        $payload = User::where('id', Auth::user()->id)->first();
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
-
-            //Check request password is null
-            if ($request->new_password == null || $request->new_password == ''){
-                $existingDatas = User::all()->except(Auth::id());
-
-                foreach ($existingDatas as $existingData) {
-                    if ($request['username'] == $existingData->username){
-                        return ResponseFormatter::error(
-                            null,
-                            'Username already exist',
-                            409
-                        );
-                    }  
-                }
-
-                foreach ($existingDatas as $existingData) {
-                    if ($request['email'] == $existingData->email){
-                        return ResponseFormatter::error(
-                            null,
-                            'Email already exist',
-                            409
-                        );
-                    }  
-                }        
-
-                $payload = User::where('id', Auth::user()->id)->first();    
-            
-                if ($request->image) {
-                    $image = $request->file('image');
-                    $imagePath = $image->store('images/profile');
-                    $imageName = $image->getClientOriginalName(); 
-                    Storage::delete($payload->image_path);
-                }
-
-                if ($request->image == null) {
-                    $imagePath = null;
-                    $imageName = null;
-                }
-                
-                $user = User::where('id', Auth::user()->id)->update([
-                    'name' => $request->name,
-                    'occupation' => $request->occupation,
-                    'username' => $request->username,
-                    'email' => $request->email,
-                    'image_name' => $imageName,
-                    'image_path' => $imagePath,
-                    'password' => $payload->password
-                ]);
-
-                
-                $user = User::where('id', Auth::user()->id)->first();
-
-                return ResponseFormatter::success(
-                    new UserResource($user),
-                    'Profile data successfully updated'
-                );
-            }
-
-            if ($request->new_password != null){
-                $existingDatas = User::all()->except(Auth::id());
-                $payload = User::where('id', Auth::user()->id)->first();
-
-                if ($request->confirmation_password != $request->new_password) {
-                    return ResponseFormatter::error(
-                        null,
-                        'The new and confirmation passwords don\'t match',
-                        406
-                    );
-                }
-
-                //check username or email is already exist
-                foreach ($existingDatas as $existingData) {
-                    if ($request['username'] == $existingData->username){
-                        return ResponseFormatter::error(
-                            null,
-                            'Username already exist',
-                            409
-                        );
-                    }  
-                }
-
-                foreach ($existingDatas as $existingData) {
-                    if ($request['email'] == $existingData->email){
-                        return ResponseFormatter::error(
-                            null,
-                            'Email already exist',
-                            409
-                        );
-                    }  
-                } 
-
-                if ($request->image) {
-                    $image = $request->file('image');
-                    $imagePath = $image->store('images/profile');
-                    $imageName = $image->getClientOriginalName(); 
-                    Storage::delete($payload->image_path);
-                }
-
-                if ($request->image == null) {
-                    $imagePath = null;
-                    $imageName = null;
-                }
-                
-                $user = User::where('id', Auth::user()->id)->update([
-                    'name' => $request->name,
-                    'occupation' => $request->occupation,
-                    'username' => $request->username,
-                    'email' => $request->email,
-                    'image_name' => $imageName,
-                    'image_path' => $imagePath,
-                    'password' => bcrypt($request->new_password),
-                ]);
-
-                $user = User::where('id', Auth::user()->id)->first();
-
-                return ResponseFormatter::success(
-                    new UserResource($user),
-                    'Profile data successfully updated'
-                );
-            }
-
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update profile data',
-                $e->getMessage(),
-                404
-            );
+        if ($request) {
+            $image = $request->file('image');
+            $imagePath = $image->store('images/profile');
+            $imageName = $image->getClientOriginalName();
+            Storage::delete($payload->image_path);
         }
+
+        if ($request == null) {
+            $imagePath = null;
+            $imageName = null;
+        }
+
+        $imageData['imageName'] = $imageName;
+        $imageData['imagePath'] = $imagePath;
+
+        return $imageData;
+    }
+
+    // to update data in database
+    public function update(UpdateProfileRequest $request)
+    {
+        $user = User::where('id', Auth::user()->id)->first();
+        $image = $this->checkImage($request);
+        $validatedData = $request->except(['_method', 'image', 'new_password', 'confirmation_password',]);
+        $validatedData['image_name'] = $image['imageName'];
+        $validatedData['image_path'] = $image['imagePath'];
+        
+        if ($request->new_password == null || $request->new_password == ''){
+            $validatedData['password'] = $user->password;
+
+            $user->update($validatedData);                
+        }
+
+        if ($request->new_password != null){
+            if ($request->confirmation_password != $request->new_password) {
+                return response()->json([
+                    'message' => 'The new and confirmation password not match'
+                ], 406);
+            }
+            $validatedData['password'] = bcrypt($request->new_password);
+
+            $user->update($validatedData);
+        }
+
+        return response()->json([
+            'message' => 'Profile data successfully updated',
+            'data' => new UserResource(User::where('id', Auth::user()->id)->first())
+        ]);
     }
 }

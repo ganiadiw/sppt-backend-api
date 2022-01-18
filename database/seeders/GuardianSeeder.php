@@ -15,37 +15,41 @@ class GuardianSeeder extends Seeder
      */
     public function run()
     {
-        Guardian::create([
-            'id' => '1',
-            'name' => 'Tezar Yohanang Wiranata',
-        ]);
-        Guardian::create([
-            'id' => '2',
-            'name' => 'Moh. Muslih',
-        ]);
-        Guardian::create([
-            'id' => '3',
-            'name' => 'M. Chandra Adi Pratama',
-        ]);
-        Guardian::create([
-            'id' => '4',
-            'name' => 'Marbani',
-        ]);
-        Guardian::create([
-            'id' => '5',
-            'name' => 'Eko Suharianto',
-        ]);
-        Guardian::create([
-            'id' => '6',
-            'name' => 'Prawoto',
-        ]);
-        Guardian::create([
-            'id' => '7',
-            'name' => 'Judi Budi Santosa',
-        ]);
-        Guardian::create([
-            'id' => '8',
-            'name' => 'Sujito',
-        ]);
+        collect([
+            [
+                'id' => '1',
+                'name' => 'Tezar Yohanang Wiranata',
+            ],
+            [
+                'id' => '2',
+                'name' => 'Moh. Muslih',
+            ],
+            [
+                'id' => '3',
+                'name' => 'M. Chandra Adi Pratama',
+            ],
+            [
+                'id' => '4',
+                'name' => 'Marbani',
+            ],
+            [
+                'id' => '5',
+                'name' => 'Eko Suharianto',
+            ],
+            [
+                'id' => '6',
+                'name' => 'Prawoto',
+            ],
+            [
+                'id' => '7',
+                'name' => 'Judi Budi Santosa',
+            ],
+            [
+                'id' => '8',
+                'name' => 'Sujito',
+            ]
+        ])->each(function ($guardian) {
+            Guardian::create($guardian);
+        });
     }
 }

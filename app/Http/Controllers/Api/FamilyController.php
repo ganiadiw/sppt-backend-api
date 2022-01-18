@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FamilyRequest;
 use App\Http\Resources\FamilyResource;
 use App\Models\Family;
 use App\Models\Owner;
@@ -11,172 +11,128 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+//  Controller guide
+//  This controller controls about family data
 class FamilyController extends Controller
 {
+    // to get all data from database
     public function index()
     {
-        try {
-            $families = Family::orderBy('name')->get();
-
-            return ResponseFormatter::success(
-                FamilyResource::collection($families),
-                'Families data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return FamilyResource::collection(Family::orderBy('name')
+                ->paginate(20))
+                ->additional(['message' => 'Families data successfully loaded']);
     }
 
-    public function store(Request $request)
+    // to store data to database
+    public function store(FamilyRequest $request)
+    {
+        $family = Family::create($request->validated());
+
+        return response()->json([
+            'message' => 'Family data successfully created',
+            'data' => $family
+        ]);
+    }
+
+    // to update in database
+    public function update(FamilyRequest $request, Family $family)
+    {
+        $family->update($request->validated());
+
+        return response()->json([
+            'message' => 'Family data successfully updated',
+            'data' => Family::find($family->id)
+        ]);
+    }
+    public function updateFamilyId(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|max:100',
-                'rt' => 'required|max:10',
-                'rw' => 'required|max:10',
-                'village' => 'required|max:100',
-                'road' => 'max:100'
+                'sppt_objects' => 'required',
+                'sppt_objects.*.id' => 'required',
+                'sppt_objects.*.family_id' => 'required',
             ]);
 
             if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
             }
 
-            $family = Family::create([
-                'name' => $request->name,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'village' => $request->village,
-                'road' => $request->road
-            ]);
+            foreach ($request->sppt_objects as $key => $value) {
+                $owner = Owner::where('id', $value['id'])->first();
 
-            return ResponseFormatter::success(
-                $family,
-                'Family data was successfully created'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create family data',
-                $e->getMessage()
-            );
-        }
-    }
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|max:100',
-                'rt' => 'required|max:10',
-                'rw' => 'required|max:10',
-                'village' => 'required|max:100',
-                'road' => 'max:100'
-                
-            ]);
-
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
+                Owner::where('id', $owner->id)->update([
+                    'family_id' => $value['family_id'],                        
+                    'name' => $owner->name,
+                    'rt' => $owner->rt,
+                    'rw' => $owner->rw,
+                    'village' => $owner->village,
+                    'road' => $owner->road
+                ]);
             }
 
-            Family::where('id', $id)->update([
-                'name' => $request->name,
-                'rt' => $request->rt,
-                'rw' => $request->rw,
-                'village' => $request->village,
-                'road' => $request->road
+            return response()->json([
+                'message' => 'SPPT data successfully updated'
             ]);
-
-            $family = Family::find($id);
-
-            return ResponseFormatter::success(
-                $family,
-                'Family data successfully updated'
-            );
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to update family data',
-                $e->getMessage()
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function show($id)
+    // to show specific data by id from database
+    public function show(Family $family)
     {
-        try {
-            $family = Family::findOrFail($id);
-
-            return ResponseFormatter::success(
-                $family,
-                'Family data successfully loaded'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return response()->json([
+            'message' => 'Family data successfully loaded',
+            'data' => new FamilyResource($family)
+        ]);
     }
 
+    // to show specific data by name from database
     public function showByName($name)
     {
         try {
             $families = Family::where('name', 'LIKE', '%' . $name . '%')->get();
 
-            return ResponseFormatter::success(
-                $families,
-                'Families data successfully loaded'
-            );
+            return response()->json([
+                'message' => 'Families data successfully loaded',
+                'data' => $families
+            ]);
         } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage().
-                404
-            );
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function destroy($id)
+    // to delete data from database
+    public function destroy(Family $family)
     {
-        try {
-            $owner = Owner::where('family_id', $id)->get();
-            $ownerCount = $owner->count();
+        $owner = Owner::where('family_id', $family->id)->get();
+        $ownerCount = $owner->count();
 
-            if ($ownerCount != 0) {
-                $response = [
-                    'family_id' => $id,
-                    'number_of_connected_data' => $ownerCount
-                ];
-                return ResponseFormatter::error(
-                    $response,
-                    'family data is still connected to other data, please update the connected data first',
-                    409
-                );
-            } else {
-                Family::findOrFail($id)->delete();
+        if ($ownerCount != 0) {
+            $response = [
+                'family_id' => $family->id,
+                'number_of_connected_data' => $ownerCount
+            ];
 
-                return ResponseFormatter::success(
-                    'The data has been deleted successfully deleted',
-                    'Successful delete data'
-                );
-            }
+            return response()->json([
+                'message' => 'family data is still connected to other data, please update the connected data first',
+                'connected_data' => $response
+            ], 409);
+        } else {
+            $family->delete();
 
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
+            return response()->json([
+                'message' => 'The data has been deleted successfully'
+            ]);
         }
     }
 }

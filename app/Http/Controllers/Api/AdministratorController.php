@@ -2,93 +2,45 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAdministratorRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
+//  Controller guide
+//  This controller controls about admin data
 class AdministratorController extends Controller
 {
+    // To get all data from database
     public function index()
     {
-        try {
-            $users = User::all();
-
-            return ResponseFormatter::success(
-                UserResource::collection($users),
-                'Users data sucessfully loaded'
-            );
-
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Data not found',
-                $e->getMessage(),
-                404
-            );
-        }
+        return UserResource::collection(User::paginate(10))
+                ->additional(['message' => 'Users data sucessfully loaded']);
     }
 
-    public function store (Request $request)
+    // To store data to database
+    public function store (StoreAdministratorRequest $request)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'username' => 'required|unique:users,username|max:100',
-                'email' => 'required|unique:users,email',
-                'occupation' => 'required',
-                'password' => 'required|min:8'
-            ]);
+        $user = User::create($request->except('password') + [
+            'role' => 'admin',
+            'password' => bcrypt($request->password)
+        ]);
 
-            if ($validator->fails()) {
-                return ResponseFormatter::error(
-                    $validator->errors(),
-                    'The given data was invalid'
-                );
-            }
+        $user->assignRole('admin');
 
-            $user = User::create([
-                'name' => $request->name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'occupation' => $request->occupation,
-                'password' => bcrypt($request->password),
-                'role' => 'admin'
-            ]);
-
-            $user->assignRole('admin');
-
-            return ResponseFormatter::success(
-                $user,
-                'User data was successfully created'
-            );
-
-
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to create user data',
-                $e->getMessage(),
-                400
-            );
-        }
+        return response()->json([
+            'message' => 'User data was successfully created',
+            'data' => new UserResource($user)
+        ], 200);
     }
 
-    public function destroy($id)
+    // to delete data from database
+    public function destroy(User $user)
     {
-        try {
-            User::findOrFail($id)->delete();
+        $user->delete();
 
-            return ResponseFormatter::success(
-                null,
-                'Suceessful delete user data'
-            );
-        } catch (Exception $e) {
-            return ResponseFormatter::error(
-                'Failed to delete user data',
-                $e->getMessage()
-            );
-        }
+        return response()->json([
+            'message' => 'Succesful delete user data'
+        ], 200);
     }
 }

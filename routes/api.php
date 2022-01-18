@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AdministratorController;
 use App\Http\Controllers\Api\AuthenticationController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\GuardianController;
+use App\Http\Controllers\Api\MutationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SpptController;
 use App\Http\Controllers\Api\TaxHistoryController;
@@ -25,18 +26,19 @@ Route::get('/v1/guardians', [GuardianController::class, 'index']);
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'family'], function () {
-        Route::get('/{id}', [FamilyController::class, 'show']);
+        Route::get('/{family}', [FamilyController::class, 'show']);
         Route::get('/name/{name}', [FamilyController::class, 'showByName']);
     });
     
     Route::get('sppts/', [SpptController::class, 'index']);
     Route::group(['prefix' => 'sppt'], function () {
         Route::get('/search/{nop}', [SpptController::class, 'showByFamily']);
-        Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
-        Route::get('/{nop}', [SpptController::class, 'show']);
+        // Route::get('/family/{id}', [SpptController::class, 'showByFamilyId']);
+        Route::get('/family/{byFamily}', [SpptController::class, 'showByFamilyId']);
+        Route::get('/{land}', [SpptController::class, 'show']);
         Route::get('/guardian/{guardian_id}', [SpptController::class, 'showByGuardian']);
         Route::get('/tax-histories/{sppt_id}', [TaxHistoryController::class, 'showTaxHistory']);
-        Route::get('/tax-history/{id}', [TaxHistoryController::class, 'show']);
+        Route::get('/tax-history/{taxHistory}', [TaxHistoryController::class, 'show']);
     });
 });
 
@@ -49,17 +51,17 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin']], funct
     
         Route::group(['prefix' => 'family'], function () {
             Route::post('/', [FamilyController::class, 'store']);
-            Route::patch('/{id}', [FamilyController::class, 'update']);
+            Route::patch('/{family}', [FamilyController::class, 'update']);
         });
     
         Route::group(['prefix' => 'sppt'], function () {
             Route::post('/', [SpptController::class, 'store']);
-            Route::patch('/update/{nop}', [SpptController::class, 'update']);
-            Route::post('/mutation', [SpptController::class, 'mutation']);
+            Route::patch('/update/{land:nop}', [SpptController::class, 'update']);
+            Route::post('/mutation', [MutationController::class, 'mutation']);
             Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
             Route::post('/tax-history', [TaxHistoryController::class, 'store']);
-            Route::patch('/tax-history/{id}', [TaxHistoryController::class, 'update']);
-            Route::delete('/tax-history/{id}', [TaxHistoryController::class, 'destroy']);
+            Route::patch('/tax-history/{taxHistory}', [TaxHistoryController::class, 'update']);
+            Route::delete('/tax-history/{taxHistory}', [TaxHistoryController::class, 'destroy']);
         });
     });
 });
@@ -68,17 +70,17 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 
     Route::get('/administrators', [AdministratorController::class, 'index']);
     Route::group(['prefix' => 'administrator'], function () {
         Route::post('/', [AdministratorController::class, 'store']);
-        Route::delete('/{id}', [AdministratorController::class, 'destroy']);
+        Route::delete('/{user}', [AdministratorController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'guardian'], function () {
-        Route::post('/', [GuardianController::class, 'createGuardian']);
-        Route::put('/{id}', [GuardianController::class, 'updateGuardian']);
-        Route::get('/{id}', [GuardianController::class, 'show']);
-        Route::delete('/{id}', [GuardianController::class, 'destroy']);
+        Route::post('/', [GuardianController::class, 'store']);
+        Route::put('/{guardian}', [GuardianController::class, 'update']);
+        Route::get('/{guardian}', [GuardianController::class, 'show']);
+        Route::delete('/{guardian}', [GuardianController::class, 'destroy']);
+        Route::patch('/id/update', [GuardianController::class, 'updateGuardianId']);
     });
 
-    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateGuardianId']);
-    Route::patch('/sppt/family-update', [SpptController::class, 'updateFamilyId']);
-    Route::delete('family/{id}', [FamilyController::class, 'destroy']);
+    Route::patch('/family/id/update', [FamilyController::class, 'updateFamilyId']);
+    Route::delete('family/{family}', [FamilyController::class, 'destroy']);
 });
