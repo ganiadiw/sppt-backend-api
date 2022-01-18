@@ -49,6 +49,3 @@ Untuk pengelolaan middleware, project ini menggunakan package dari Laravel Sanct
 
 ### Database Seeder
 Berisi data dummy yang dapat digunakan sebagai contoh data. Dapat diakses di direktori database/seeders
-
-### Custom Helpers
-Berisi file yang digunakan sebagai formatter dari response json yang dihasilkan oleh sistem. Dapat diakses pada direktor Helpers

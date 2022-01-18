@@ -44,6 +44,45 @@ class FamilyController extends Controller
             'data' => Family::find($family->id)
         ]);
     }
+    public function updateFamilyId(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'sppt_objects' => 'required',
+                'sppt_objects.*.id' => 'required',
+                'sppt_objects.*.family_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            foreach ($request->sppt_objects as $key => $value) {
+                $owner = Owner::where('id', $value['id'])->first();
+
+                Owner::where('id', $owner->id)->update([
+                    'family_id' => $value['family_id'],                        
+                    'name' => $owner->name,
+                    'rt' => $owner->rt,
+                    'rw' => $owner->rw,
+                    'village' => $owner->village,
+                    'road' => $owner->road
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'SPPT data successfully updated'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     // to show specific data by id from database
     public function show(Family $family)

@@ -8,6 +8,9 @@ use App\Http\Requests\UpdateGuardianRequest;
 use App\Http\Resources\GuardianResource;
 use App\Models\Guardian;
 use App\Models\Land;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 //  Controller guide
 //  This controller controls about admin data
@@ -53,6 +56,53 @@ class GuardianController extends Controller
             'message' => 'Guardian data successfully updated',
             'data' => $guardian
         ]);
+    }
+
+    public function updateGuardianId(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'sppt_objects' => 'required',
+                'sppt_objects.*.nop' => 'required',
+                'sppt_objects.*.guardian_id' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'The given data was invalid',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            foreach ($request->sppt_objects as $key => $value) {
+                $land = Land::where('nop', $value['nop'])->first();
+
+                Land::where('nop', $land->nop)->update([
+                    'nop' => $land->nop,
+                    'owner_id' => $land->owner_id,
+                    'guardian_id' => $value['guardian_id'],
+                    'rt' => $land->rt,
+                    'rw' => $land->rw,
+                    'village' => $land->village,
+                    'road' => $land->road,
+                    'sppt_persil_number' => $land->sppt_persil_number,
+                    'block_number' => $land->block_number,
+                    'land_area' => $land->land_area,
+                    'land_area_unit' => $land->land_area_unit,
+                    'building_area' => $land->building_area,
+                    'building_area_unit' => $land->building_area_unit,
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'SPPT data successfully updated'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Something wrong happened',
+                'errors' => $e->getMessage()
+            ], 500);
+        }
     }
 
     // to delete data from database

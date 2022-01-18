@@ -32,8 +32,8 @@ class UpdateProfileRequest extends FormRequest
             'email' => ['required', Rule::unique('users')->ignore(Auth::id())],
             'image' => ['image', 'mimes:png,jpg,jpeg'],
             '_method' => ['required'],
-            'confirmation_password' => ['min:8'],
-            'new_password' => ['min:8']
+            'new_password' => ['min:8'],
+            'confirmation_password' => ['min:8']
         ];
     }
 }

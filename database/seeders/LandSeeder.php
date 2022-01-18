@@ -34,7 +34,7 @@ class LandSeeder extends Seeder
                 'road' => $faker->streetName(),
                 'block_number' => $blockNumber,
                 'land_area' => $faker->randomNumber(3, true),
-                'land_area_unit' => $faker->randomElement(['are, ha']),
+                'land_area_unit' => 'ha',
                 'building_area' => $faker->randomNumber(3, true),
                 'building_area_unit' => 'm2',
             ]);

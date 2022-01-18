@@ -21,8 +21,9 @@ class AdministratorController extends Controller
     // To store data to database
     public function store (StoreAdministratorRequest $request)
     {
-        $user = User::create($request->validated() + [
-            'role' => 'admin'
+        $user = User::create($request->except('password') + [
+            'role' => 'admin',
+            'password' => bcrypt($request->password)
         ]);
 
         $user->assignRole('admin');

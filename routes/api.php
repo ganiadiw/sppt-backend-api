@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AdministratorController;
 use App\Http\Controllers\Api\AuthenticationController;
 use App\Http\Controllers\Api\FamilyController;
 use App\Http\Controllers\Api\GuardianController;
+use App\Http\Controllers\Api\MutationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SpptController;
 use App\Http\Controllers\Api\TaxHistoryController;
@@ -56,7 +57,7 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin|admin']], funct
         Route::group(['prefix' => 'sppt'], function () {
             Route::post('/', [SpptController::class, 'store']);
             Route::patch('/update/{land:nop}', [SpptController::class, 'update']);
-            Route::post('/mutation', [SpptController::class, 'mutation']);
+            Route::post('/mutation', [MutationController::class, 'mutation']);
             Route::delete('/delete/{id}', [SpptController::class, 'destroy']);
             Route::post('/tax-history', [TaxHistoryController::class, 'store']);
             Route::patch('/tax-history/{taxHistory}', [TaxHistoryController::class, 'update']);
@@ -77,9 +78,9 @@ Route::group(['middleware' => ['auth:sanctum', 'role:super admin'], 'prefix' => 
         Route::put('/{guardian}', [GuardianController::class, 'update']);
         Route::get('/{guardian}', [GuardianController::class, 'show']);
         Route::delete('/{guardian}', [GuardianController::class, 'destroy']);
+        Route::patch('/id/update', [GuardianController::class, 'updateGuardianId']);
     });
 
-    Route::patch('/sppt/guardian-update', [SpptController::class, 'updateGuardianId']);
-    Route::patch('/sppt/family-update', [SpptController::class, 'updateFamilyId']);
+    Route::patch('/family/id/update', [FamilyController::class, 'updateFamilyId']);
     Route::delete('family/{family}', [FamilyController::class, 'destroy']);
 });

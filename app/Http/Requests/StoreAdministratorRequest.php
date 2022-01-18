@@ -32,11 +32,4 @@ class StoreAdministratorRequest extends FormRequest
             'password' => ['required', 'min:8']
         ];
     }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'password' => bcrypt($this->password),
-        ]);
-    }
 }
